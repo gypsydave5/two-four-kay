@@ -17,11 +17,14 @@ fun Request.Companion.parseHar(harRequest: com.gypsydave5.twofourkay.har.Request
 }
 
 fun Response.Companion.parseHar(res: com.gypsydave5.twofourkay.har.Response): Response {
-    return Response(
+    val response = Response(
         Status(res.status.toInt(), res.statusText)
     )
         .headers(res.headers.map { it.name to it.value })
-        .body(res.content.text)
+
+    res.content.text?.let { response.body(it) }
+
+    return response
 }
 
 fun String.parseHar(): HAR {

@@ -4,6 +4,7 @@ import org.http4k.core.HttpMessage.Companion.HTTP_1_1
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Uri
+import org.http4k.core.cookie.cookies
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -55,6 +56,17 @@ class ParseHarRequestTest {
             ),
             Request.parseHar(request).headers
         )
+    }
+
+    @Test
+    fun `gets the cookies`() {
+        val request = getFirstRequestFrom("www.gmtgames.com_firefox_HTTP_1_1.har")
+
+        assertEquals(
+            listOf(),
+            Request.parseHar(request).cookies()
+        )
+
     }
 }
 

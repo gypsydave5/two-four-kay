@@ -18,11 +18,11 @@ data class Header(
 data class Cookie(
     val name: String,
     val value: String,
-    val path: String,
-    val domain: String,
-    val expires: String,
-    val httpOnly: Boolean,
-    val secure: Boolean,
+    val path: String? = null,
+    val domain: String? = null,
+    val expires: String? = null,
+    val httpOnly: Boolean? = null,
+    val secure: Boolean? = null,
 )
 
 @Serializable
@@ -69,9 +69,9 @@ data class Entry(
     val cache: Cache,
     val timings: Timings,
     val time: Long,
-    @JsonNames("securityState", "_securityState") val securityState: String,
-    @JsonNames("serverIpaddress", "serverIPAddress") val serverIpaddress: String,
-    val connection: String,
+    @JsonNames("securityState", "_securityState") val securityState: String? = null,
+    @JsonNames("serverIpaddress", "serverIPAddress") val serverIpaddress: String? = null,
+    val connection: String? = null,
 )
 
 @Serializable
@@ -123,19 +123,19 @@ data class Response(
 
 @Serializable
 data class Content(
-    val mimeType: String,
-    val size: Long,
+    val mimeType: String? = null,
+    val size: Long? = null,
     val encoding: String? = null,
-    val text: String,
+    val text: String? = null,
 )
 
 @Serializable
 data class Timings(
-    val blocked: Long,
-    val dns: Long,
-    val connect: Long,
-    val ssl: Long,
-    val send: Long,
-    val wait: Long,
-    val receive: Long,
+    val blocked: Long? = null,
+    val dns: Long? = null,
+    val connect: Long? = null,
+    val ssl: Long? = null,
+    val send: Long? = null,
+    val wait: Long? = null,
+    val receive: Long? = null,
 )
