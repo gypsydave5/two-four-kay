@@ -41,6 +41,8 @@ class ParseHarResponseTest {
             actual = org.http4k.core.Response.parseHar(res).bodyString()
         )
     }
+
+
 }
 
 private fun getFirstResponseFrom(path: String): Response = getHarFromResource(path).log.entries.first().response
