@@ -9,12 +9,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class ParseHarRequestTest {
+    val request = getFirstRequestFrom("motherfuckingwebsite_firefox_http_1_1.har")
 
     @Test
     fun `gets the correct method`() {
-        val har = getHarFromResource("motherfuckingwebsite_firefox_http_1_1.har")
-        val request = har.log.entries.first().request
-
         assertEquals(
             expected = Request.parseHar(request).method,
             actual = Method.GET
@@ -23,9 +21,6 @@ class ParseHarRequestTest {
 
     @Test
     fun `gets the correct URL`() {
-        val har = getHarFromResource("motherfuckingwebsite_firefox_http_1_1.har")
-        val request = har.log.entries.first().request
-
         assertEquals(
             expected = Uri.of("http://motherfuckingwebsite.com/"),
             actual = Request.parseHar(request).uri
@@ -34,8 +29,6 @@ class ParseHarRequestTest {
 
     @Test
     fun `gets the correct HTTP version`() {
-        val har = getHarFromResource("motherfuckingwebsite_firefox_http_1_1.har")
-        val request = har.log.entries.first().request
 
         assertEquals(
             expected = HTTP_1_1,
@@ -45,8 +38,6 @@ class ParseHarRequestTest {
 
     @Test
     fun `gets the expected headers`() {
-        val req = getFirstRequestFrom("motherfuckingwebsite_firefox_http_1_1.har")
-
         assertEquals(
             listOf(
                 "Host" to "motherfuckingwebsite.com",
@@ -62,7 +53,7 @@ class ParseHarRequestTest {
                 "Pragma" to "no-cache",
                 "Cache-Control" to "no-cache"
             ),
-            Request.parseHar(req).headers
+            Request.parseHar(request).headers
         )
     }
 }
