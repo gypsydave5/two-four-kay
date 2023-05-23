@@ -1,7 +1,15 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package com.gypsydave5.twofourkay.har
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNames
+
+fun String.parseHar(): HAR {
+    return Json.decodeFromString<HAR>(this)
+}
 
 @Serializable
 data class HAR(
@@ -23,13 +31,14 @@ data class Cookie(
     val expires: String? = null,
     val httpOnly: Boolean? = null,
     val secure: Boolean? = null,
+    val sameSite: String? = null,
 )
 
 @Serializable
 data class Log(
     val version: String,
     val creator: Creator,
-    val browser: Browser,
+    val browser: Browser? = null,
     val pages: List<Page>,
     val entries: List<Entry>,
 )
@@ -56,8 +65,8 @@ data class Page(
 
 @Serializable
 data class PageTimings(
-    val onContentLoad: Long,
-    val onLoad: Long,
+    val onContentLoad: Double,
+    val onLoad: Double,
 )
 
 @Serializable
@@ -68,10 +77,20 @@ data class Entry(
     val response: Response,
     val cache: Cache,
     val timings: Timings,
-    val time: Long,
+    val time: Double,
     @JsonNames("securityState", "_securityState") val securityState: String? = null,
     @JsonNames("serverIpaddress", "serverIPAddress") val serverIpaddress: String? = null,
     val connection: String? = null,
+    @JsonNames("_initiator") val initiator: Initiator? = null,
+    @JsonNames("_priority") val priority: String? = null,
+    @JsonNames("_resourceType") val resourceType: String? = null,
+)
+
+@Serializable
+data class Initiator(
+    val type: String,
+    val url: String? = null,
+    val lineNumber: Int? = null
 )
 
 @Serializable
@@ -100,6 +119,20 @@ data class Request(
     val cookies: List<Cookie>,
     val queryString: List<QueryString>,
     val headersSize: Long,
+    val postData: PostData? = null
+)
+
+@Serializable
+data class PostData(
+    val mimeType: String,
+    val text: String,
+    val params: List<Param>,
+)
+
+@Serializable
+data class Param(
+    val name: String,
+    val value: String,
 )
 
 @Serializable
@@ -119,6 +152,8 @@ data class Response(
     val redirectURL: String,
     val headersSize: Long,
     val bodySize: Long,
+    @JsonNames("_transferSize") val transferSize: Long? = null,
+    @JsonNames("_error") val error: Long? = null,
 )
 
 @Serializable
@@ -131,11 +166,12 @@ data class Content(
 
 @Serializable
 data class Timings(
-    val blocked: Long? = null,
+    val blocked: Double? = null,
     val dns: Long? = null,
     val connect: Long? = null,
     val ssl: Long? = null,
-    val send: Long? = null,
-    val wait: Long? = null,
-    val receive: Long? = null,
+    val send: Double? = null,
+    val wait: Double? = null,
+    val receive: Double? = null,
+    @JsonNames("_blocked_queueing") val blocked_queueing: Double? = null,
 )

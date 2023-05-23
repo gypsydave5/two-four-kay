@@ -4,13 +4,16 @@ import org.http4k.core.HttpMessage.Companion.HTTP_1_1
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Uri
+import org.http4k.core.cookie.Cookie
 import org.http4k.core.cookie.cookies
+import org.http4k.core.queries
+import org.http4k.urlDecoded
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class ParseHarRequestTest {
-    val request = getFirstRequestFrom("motherfuckingwebsite_firefox_http_1_1.har")
+    private val request = getFirstRequestFrom("motherfuckingwebsite_firefox_http_1_1.har")
 
     @Test
     fun `gets the correct method`() {
@@ -60,13 +63,35 @@ class ParseHarRequestTest {
 
     @Test
     fun `gets the cookies`() {
-        val request = getFirstRequestFrom("www.gmtgames.com_firefox_HTTP_1_1.har")
+        val harRequest = getFirstRequestFrom("stackoverflow.com_chrome_http_2.har")
+        val request = Request.parseHar(harRequest)
 
         assertEquals(
-            listOf(),
-            Request.parseHar(request).cookies()
+            Cookie(name = "prov", value = "ab5356ec-a671-9c2a-83eb-02a89f01d04f"),
+            request.cookies().first()
         )
+    }
+}
 
+class ParseHarRequestChromeTest {
+
+    @Test
+    fun `gets the url`() {
+        val request = getFirstRequestFrom("html.duckduckgo.com_chrome_http_2.har")
+        assertEquals(
+            Uri.of(request.url),
+            Request.parseHar(request).uri,
+        )
+    }
+
+    @Test
+    fun `gets the query string`() {
+        val request = getFirstRequestFrom("www.google.com.har")
+
+        assertEquals(
+            request.queryString.map { it.name to it.value.urlDecoded() },
+            Request.parseHar(request).uri.queries()
+        )
     }
 }
 
@@ -78,5 +103,5 @@ fun getHarFromResource(path: String): HAR {
     return h
 }
 
-fun getFirstRequestFrom(path: String): com.gypsydave5.twofourkay.har.Request =
+private fun getFirstRequestFrom(path: String): com.gypsydave5.twofourkay.har.Request =
     getHarFromResource(path).log.entries.first().request
