@@ -1,21 +1,20 @@
 package com.gypsydave5.twofourkay.har
 
-import org.http4k.core.Method
+import org.http4k.core.*
 import org.http4k.core.Request
 import org.http4k.core.Response
-import org.http4k.core.Status
 
 
 fun Request.Companion.parseHar(harRequest: com.gypsydave5.twofourkay.har.Request): Request = Request(
     method = Method.valueOf(harRequest.method),
     uri = harRequest.url,
-    version = harRequest.httpVersion.uppercase(),
+    version = harRequest.httpVersion.toHttpVersion(),
 )
     .headers(harRequest.headers.map(Header::toPair))
 
 fun Response.Companion.parseHar(harResponse: com.gypsydave5.twofourkay.har.Response): Response = Response(
     status = Status(harResponse.status.toInt(), harResponse.statusText),
-    version = harResponse.httpVersion.uppercase(),
+    version = harResponse.httpVersion.toHttpVersion(),
 )
     .body(harResponse.content.text ?: "")
     .headers(harResponse.headers.map(Header::toPair))
@@ -29,4 +28,11 @@ private fun Header.toPair(): Pair<String, String> {
 
 private fun String.fixSameSite(): String {
     return replace("; SameSite=(lax|LAX)".toRegex(), "; SameSite=Lax")
+}
+
+private fun String.toHttpVersion(): String {
+    return when (uppercase()) {
+        "HTTP/2", "H3" -> HttpMessage.HTTP_2
+        else -> HttpMessage.HTTP_1_1
+    }
 }

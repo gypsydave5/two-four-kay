@@ -1,12 +1,9 @@
 import com.gypsydave5.twofourkay.har.HAR
 import com.gypsydave5.twofourkay.har.parseHar
+import org.http4k.core.*
 import org.http4k.core.HttpMessage.Companion.HTTP_1_1
-import org.http4k.core.Method
-import org.http4k.core.Request
-import org.http4k.core.Uri
 import org.http4k.core.cookie.Cookie
 import org.http4k.core.cookie.cookies
-import org.http4k.core.queries
 import org.http4k.urlDecoded
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -91,6 +88,16 @@ class ParseHarRequestChromeTest {
         assertEquals(
             request.queryString.map { it.name to it.value.urlDecoded() },
             Request.parseHar(request).uri.queries()
+        )
+    }
+
+    @Test
+    fun `can handle http_3`() {
+        val request = getFirstRequestFrom("www.google.com.har")
+
+        assertEquals(
+            HttpMessage.HTTP_2,
+            Request.parseHar(request).version,
         )
     }
 }
