@@ -21,14 +21,11 @@ fun Response.Companion.parseHar(harResponse: com.gypsydave5.twofourkay.har.Respo
 
 private fun Header.toPair(): Pair<String, String> {
     return when (name.lowercase()) {
-        "set-cookie" -> name to value.fixSameSite()
+        "set-cookie" -> name to value
         else -> name to value
     }
 }
 
-private fun String.fixSameSite(): String {
-    return replace("; SameSite=(lax|LAX)".toRegex(), "; SameSite=Lax")
-}
 
 private fun String.toHttpVersion(): String {
     return when (uppercase()) {
