@@ -1,4 +1,4 @@
-import com.gypsydave5.twofourkay.generateKotlin
+import io.github.gypsydave5.twofourkay.generateKotlin
 import org.http4k.core.Method
 import org.http4k.core.Request
 import kotlin.test.Test

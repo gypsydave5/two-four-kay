@@ -1,4 +1,4 @@
-import com.gypsydave5.twofourkay.har.parseHar
+import io.github.gypsydave5.twofourkay.har.parseHar
 import org.http4k.core.HttpMessage.Companion.HTTP_1_1
 import org.http4k.core.Response
 import org.http4k.core.Status
@@ -10,7 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ParseHarResponseTest {
-    private val res: com.gypsydave5.twofourkay.har.Response =
+    private val res: io.github.gypsydave5.twofourkay.har.Response =
         getFirstResponseFrom("motherfuckingwebsite_firefox_http_1_1.har")
 
     @Test
@@ -79,5 +79,5 @@ class ParseHarResponseChromeTest {
     }
 }
 
-private fun getFirstResponseFrom(path: String): com.gypsydave5.twofourkay.har.Response =
+private fun getFirstResponseFrom(path: String): io.github.gypsydave5.twofourkay.har.Response =
     getHarFromResource(path).log.entries.first().response

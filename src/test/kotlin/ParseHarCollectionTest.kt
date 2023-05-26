@@ -1,4 +1,4 @@
-import com.gypsydave5.twofourkay.har.toCommunications
+import io.github.gypsydave5.twofourkay.har.toCommunications
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

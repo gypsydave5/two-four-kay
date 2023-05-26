@@ -15,6 +15,7 @@ dependencies {
     testImplementation(kotlin("test"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
 
     implementation(platform("org.http4k:http4k-bom:4.44.1.0"))
     implementation("org.http4k:http4k-core")

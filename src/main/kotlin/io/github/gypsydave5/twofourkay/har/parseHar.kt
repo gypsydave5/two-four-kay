@@ -1,4 +1,4 @@
-package com.gypsydave5.twofourkay.har
+package io.github.gypsydave5.twofourkay.har
 
 import org.http4k.core.*
 import org.http4k.core.Request
@@ -6,7 +6,7 @@ import org.http4k.core.Response
 import org.http4k.core.body.form
 
 
-fun Request.Companion.parseHar(harRequest: com.gypsydave5.twofourkay.har.Request): Request = Request(
+fun Request.Companion.parseHar(harRequest: io.github.gypsydave5.twofourkay.har.Request): Request = Request(
     method = Method.valueOf(harRequest.method),
     uri = harRequest.url,
     version = harRequest.httpVersion.toHttpVersion(),
@@ -16,7 +16,7 @@ fun Request.Companion.parseHar(harRequest: com.gypsydave5.twofourkay.har.Request
     .let { request -> harRequest.postData?.text?.let { text -> request.body(text) } ?: request }
 
 
-fun Response.Companion.parseHar(harResponse: com.gypsydave5.twofourkay.har.Response): Response = Response(
+fun Response.Companion.parseHar(harResponse: io.github.gypsydave5.twofourkay.har.Response): Response = Response(
     status = Status(harResponse.status.toInt(), harResponse.statusText),
     version = harResponse.httpVersion.toHttpVersion(),
 )

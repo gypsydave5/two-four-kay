@@ -1,4 +1,4 @@
-package com.gypsydave5.twofourkay.har
+package io.github.gypsydave5.twofourkay.har
 
 class Communications(private val comms: List<Communication>) : List<Communication> by comms
 
@@ -11,4 +11,3 @@ fun HAR.toCommunications(): Communications {
 private fun Entry.toCommunication() = Communication(this.request.toRequest(), this.response.toResponse())
 private fun Request.toRequest() = org.http4k.core.Request.parseHar(this)
 private fun Response.toResponse() = org.http4k.core.Response.parseHar(this)
-

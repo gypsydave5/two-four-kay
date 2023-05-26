@@ -1,5 +1,5 @@
-import com.gypsydave5.twofourkay.har.HAR
-import com.gypsydave5.twofourkay.har.parseHar
+import io.github.gypsydave5.twofourkay.har.HAR
+import io.github.gypsydave5.twofourkay.har.parseHar
 import org.http4k.core.*
 import org.http4k.core.HttpMessage.Companion.HTTP_1_1
 import org.http4k.core.body.formAsMap
@@ -135,5 +135,5 @@ fun getHarFromResource(path: String): HAR {
     return har
 }
 
-private fun getFirstRequestFrom(path: String): com.gypsydave5.twofourkay.har.Request =
+private fun getFirstRequestFrom(path: String): io.github.gypsydave5.twofourkay.har.Request =
     getHarFromResource(path).log.entries.first().request
