@@ -13,6 +13,7 @@ fun Request.Companion.parseHar(harRequest: com.gypsydave5.twofourkay.har.Request
 )
     .headers(harRequest.headers.map(Header::toPair))
     .let { request -> harRequest.postData?.params?.fold(request) { r, p -> r.form(p.name, p.value) } ?: request }
+    .let { request -> harRequest.postData?.text?.let { text -> request.body(text) } ?: request }
 
 
 fun Response.Companion.parseHar(harResponse: com.gypsydave5.twofourkay.har.Response): Response = Response(

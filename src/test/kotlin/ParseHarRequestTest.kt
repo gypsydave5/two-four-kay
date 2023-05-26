@@ -115,6 +115,16 @@ class ParseHarRequestChromeTest {
             request.formAsMap(),
         )
     }
+
+    @Test
+    fun `can read a non-form encoded request body`() {
+        val harRequest = getFirstRequestFrom("all_http_methods_firefox_http_1_1.har")
+        val request = Request.parseHar(harRequest)
+        assertEquals(
+            "testing POST",
+            request.bodyString(),
+        )
+    }
 }
 
 fun getResourceAsText(path: String): String? = object {}.javaClass.getResource(path)?.readText()

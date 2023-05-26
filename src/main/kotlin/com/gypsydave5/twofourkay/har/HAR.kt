@@ -3,13 +3,22 @@
 package com.gypsydave5.twofourkay.har
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonNames
+import kotlinx.serialization.json.JsonPrimitive
 
 fun String.parseHar(): HAR {
     return Json.decodeFromString<HAR>(this)
 }
+
 
 @Serializable
 data class HAR(
@@ -90,7 +99,20 @@ data class Entry(
 data class Initiator(
     val type: String,
     val url: String? = null,
-    val lineNumber: Int? = null
+    val lineNumber: Int? = null,
+    val stack: Stack? = null,
+)
+
+@Serializable
+data class Stack(val callFrames: List<CallFrame>)
+
+@Serializable
+data class CallFrame(
+    val functionName: String,
+    val scriptId: String,
+    val url: String,
+    val lineNumber: Int,
+    val columnNumber: Int
 )
 
 @Serializable
@@ -126,7 +148,7 @@ data class Request(
 data class PostData(
     val mimeType: String,
     val text: String,
-    val params: List<Param>,
+    val params: List<Param>? = null,
 )
 
 @Serializable
@@ -153,8 +175,31 @@ data class Response(
     val headersSize: Long,
     val bodySize: Long,
     @JsonNames("_transferSize") val transferSize: Long? = null,
-    @JsonNames("_error") val error: Long? = null,
+    @JsonNames("_error") val error: ResponseError? = null,
 )
+
+object ResponseErrorSerializer : KSerializer<ResponseError> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: ResponseError) {
+        when (value) {
+            is ResponseErrorString -> encoder.encodeString(value.raw)
+            is ResponseErrorCode -> encoder.encodeLong(value.raw)
+        }
+    }
+
+    override fun deserialize(decoder: Decoder): ResponseError {
+        val json = ((decoder as JsonDecoder).decodeJsonElement()) as JsonPrimitive
+        if (json.isString) {
+            return ResponseErrorString(json.content)
+        }
+        return ResponseErrorCode(json.content.toLong())
+    }
+}
+
+@Serializable(with = ResponseErrorSerializer::class)
+sealed interface ResponseError
+class ResponseErrorCode(val raw: Long) : ResponseError
+class ResponseErrorString(val raw: String) : ResponseError
 
 @Serializable
 data class Content(
