@@ -2,6 +2,7 @@ import com.gypsydave5.twofourkay.har.HAR
 import com.gypsydave5.twofourkay.har.parseHar
 import org.http4k.core.*
 import org.http4k.core.HttpMessage.Companion.HTTP_1_1
+import org.http4k.core.body.formAsMap
 import org.http4k.core.cookie.Cookie
 import org.http4k.core.cookie.cookies
 import org.http4k.urlDecoded
@@ -100,14 +101,28 @@ class ParseHarRequestChromeTest {
             Request.parseHar(request).version,
         )
     }
+
+    @Test
+    fun `can read a form encoded request body`() {
+        val harRequest = getFirstRequestFrom("news.ycombinator.com_firefox_http_1_1.har")
+        val request = Request.parseHar(harRequest)
+        assertEquals(
+            mapOf(
+                "goto" to listOf("news"),
+                "acct" to listOf("gypsydave5"),
+                "pw" to listOf("REDACTED"),
+            ),
+            request.formAsMap(),
+        )
+    }
 }
 
 fun getResourceAsText(path: String): String? = object {}.javaClass.getResource(path)?.readText()
 
 fun getHarFromResource(path: String): HAR {
-    val h = getResourceAsText(path)?.parseHar()
-    assertNotNull(h)
-    return h
+    val har = getResourceAsText(path)?.parseHar()
+    assertNotNull(har)
+    return har
 }
 
 private fun getFirstRequestFrom(path: String): com.gypsydave5.twofourkay.har.Request =

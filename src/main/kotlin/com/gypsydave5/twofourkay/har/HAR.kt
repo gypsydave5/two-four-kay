@@ -162,6 +162,7 @@ data class Content(
     val size: Long? = null,
     val encoding: String? = null,
     val text: String? = null,
+    val comment: String? = null
 )
 
 @Serializable
