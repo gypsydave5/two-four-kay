@@ -19,12 +19,11 @@ fun Response.generateKotlin(): String {
 fun Response.asCodeBlock(): CodeBlock {
     val base = CodeBlock.builder()
         .add(
-            """%T(""",
+            """%T(%L%L)""",
             Response::class.asClassName(),
+            status.toCodeBlock(),
+            httpVersionCodeBlock(version)
         )
-        .add(status.toCodeBlock())
-        .add(httpVersionCodeBlock(version))
-        .add(")")
 
     headers.forEach {
         base.add("\n\t.header(\"\"\"${it.first}\"\"\", \"\"\"${it.second?.unescapePercents()?.trim('\"')}\"\"\")")
