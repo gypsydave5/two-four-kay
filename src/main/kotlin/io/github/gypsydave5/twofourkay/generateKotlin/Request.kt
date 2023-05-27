@@ -1,7 +1,6 @@
 package io.github.gypsydave5.twofourkay.generateKotlin
 
 import com.squareup.kotlinpoet.*
-import org.http4k.core.HttpMessage
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.queries
@@ -22,22 +21,15 @@ fun Request.generateKotlin(): String {
 fun Request.asCodeBlock(): CodeBlock {
     val base = CodeBlock.builder()
 
-    if (version == HttpMessage.HTTP_1_1) {
-        base.add(
-            "%T(%T.$method,·%S)",
-            Request::class.asClassName(),
-            Method::class.asClassName(),
-            uri.toString().removeSuffix("?" + uri.query),
-        )
-    } else if (version == HttpMessage.HTTP_2) {
-        base.add(
-            "%T(%T.$method,·%S,·%T.HTTP_2)",
-            Request::class.asClassName(),
-            Method::class.asClassName(),
-            uri.toString().removeSuffix("?" + uri.query),
-            HttpMessage::class.asClassName()
-        )
-    }
+    base.add(
+        "%T(%T.$method,·%S%L)",
+        Request::class.asClassName(),
+        Method::class.asClassName(),
+        uri.toString().removeSuffix("?" + uri.query),
+        httpVersionCodeBlock(version)
+    )
+//        .add(httpVersionCodeBlock(version))
+//        .add(")")
 
     uri.queries().forEach {
         base.add("\n\t.query(\"\"\"${it.first}\"\"\", \"\"\"${it.second?.unescapePercents()?.trim('\"')}\"\"\")")

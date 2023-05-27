@@ -1,6 +1,7 @@
 package generateKotlin
 
 import io.github.gypsydave5.twofourkay.generateKotlin.generateKotlin
+import org.http4k.core.HttpMessage
 import org.http4k.core.Method
 import org.http4k.core.Request
 import kotlin.test.Test
@@ -18,6 +19,20 @@ class RequestTest {
 import org.http4k.core.Request
 
 public val request: Request = Request(Method.GET, "http://gypsydave5.com")
+"""
+        assertEquals(expected, requestString)
+    }
+
+    @Test
+    fun `explicitly show the HTTP version when it is not 1_1`() {
+        val requestString = Request(Method.GET, "http://gypsydave5.com", HttpMessage.HTTP_2).generateKotlin()
+
+        val expected =
+            """import org.http4k.core.HttpMessage
+import org.http4k.core.Method
+import org.http4k.core.Request
+
+public val request: Request = Request(Method.GET, "http://gypsydave5.com", HttpMessage.HTTP_2)
 """
         assertEquals(expected, requestString)
     }
