@@ -7,7 +7,7 @@ internal fun Body.toCodeBlock(): CodeBlock {
     val base = CodeBlock.builder()
     String(payload.array()).takeIf(String::isNotEmpty)
         ?.unescapePercents()
-        ?.also { base.add("\n\t.body(${it.tripleQuote()})") }
+        ?.also { base.add("\n\t.body(%S)", it) }
     return base.build()
 }
 

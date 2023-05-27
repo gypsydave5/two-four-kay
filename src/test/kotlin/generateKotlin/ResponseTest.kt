@@ -23,6 +23,51 @@ public val response: Response = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
     }
 
     @Test
+    fun bodies() {
+        val responseString = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
+            .body("body")
+            .generateKotlin()
+
+        val expected =
+            """import org.http4k.core.Response
+import org.http4k.core.Status
+
+public val response: Response = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
+    	.body("body")
+"""
+        assertEquals(expected, responseString)
+    }
+
+    @Test
+    fun `big bodies`() {
+        val responseString = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
+            .body(
+                """this
+                |is
+                |a
+                |long
+                |body
+            """.trimMargin()
+            )
+            .generateKotlin()
+
+        val expected =
+            """import org.http4k.core.Response
+import org.http4k.core.Status
+
+public val response: Response = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
+    	.body(""${'"'}
+    |this
+    |is
+    |a
+    |long
+    |body
+    ""${'"'}.trimMargin())
+"""
+        assertEquals(expected, responseString)
+    }
+
+    @Test
     fun headers() {
         val responseString = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
             .header("do", "what")
