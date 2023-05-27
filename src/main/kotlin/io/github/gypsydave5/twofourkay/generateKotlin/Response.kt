@@ -2,7 +2,6 @@ package io.github.gypsydave5.twofourkay.generateKotlin
 
 import com.squareup.kotlinpoet.*
 import org.http4k.core.Response
-import org.http4k.core.Status
 
 fun Response.generateKotlin(): String {
     val base = asCodeBlock()
@@ -20,10 +19,11 @@ fun Response.generateKotlin(): String {
 fun Response.asCodeBlock(): CodeBlock {
     val base = CodeBlock.builder()
         .add(
-            """%T(%T.${status.toName()})""",
+            """%T(""",
             Response::class.asClassName(),
-            Status::class.asClassName()
         )
+        .add(status.toCodeBlock())
+        .add(")")
 
     headers.forEach {
         base.add("\n\t.header(\"\"\"${it.first}\"\"\", \"\"\"${it.second?.unescapePercents()?.trim('\"')}\"\"\")")

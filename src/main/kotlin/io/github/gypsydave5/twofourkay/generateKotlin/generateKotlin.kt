@@ -1,8 +1,23 @@
 package io.github.gypsydave5.twofourkay.generateKotlin
 
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.asClassName
 import org.http4k.core.Status
 
 internal fun String.unescapePercents() = replace("%", "%%")
+
+internal fun Status.toCodeBlock(): CodeBlock {
+    val base = CodeBlock.builder()
+    val name = toName()
+
+    if (name != null) {
+        base.add("%T.${name}", Status::class.asClassName())
+    } else {
+        base.add("%T($code, %S)", Status::class.asClassName(), this.description)
+    }
+    return base.build()
+}
+
 
 internal fun Status.toName(): String? = when (this) {
     Status.OK -> "OK"
