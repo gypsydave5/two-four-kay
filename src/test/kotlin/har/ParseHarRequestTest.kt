@@ -1,3 +1,5 @@
+package har
+
 import io.github.gypsydave5.twofourkay.har.HAR
 import io.github.gypsydave5.twofourkay.har.parseHar
 import org.http4k.core.*
@@ -6,12 +8,13 @@ import org.http4k.core.body.formAsMap
 import org.http4k.core.cookie.Cookie
 import org.http4k.core.cookie.cookies
 import org.http4k.urlDecoded
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
+import io.github.gypsydave5.twofourkay.har.Request as HarRequest
 
 class ParseHarRequestTest {
-    private val request = getFirstRequestFrom("motherfuckingwebsite_firefox_http_1_1.har")
+    private val request: HarRequest = getFirstRequestFrom("motherfuckingwebsite_firefox_http_1_1.har")
 
     @Test
     fun `gets the correct method`() {
@@ -127,13 +130,11 @@ class ParseHarRequestChromeTest {
     }
 }
 
-fun getResourceAsText(path: String): String? = object {}.javaClass.getResource(path)?.readText()
+fun getResourceAsText(path: String): String =
+    File("src/test/resources/$path").readText()
 
-fun getHarFromResource(path: String): HAR {
-    val har = getResourceAsText(path)?.parseHar()
-    assertNotNull(har)
-    return har
-}
+fun getHarFromResource(path: String): HAR =
+    getResourceAsText(path).parseHar()
 
-private fun getFirstRequestFrom(path: String): io.github.gypsydave5.twofourkay.har.Request =
+private fun getFirstRequestFrom(path: String): HarRequest =
     getHarFromResource(path).log.entries.first().request

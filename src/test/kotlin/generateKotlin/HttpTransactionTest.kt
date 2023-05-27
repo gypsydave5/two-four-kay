@@ -1,36 +1,12 @@
+package generateKotlin
+
 import io.github.gypsydave5.twofourkay.generateKotlin.generateKotlin
 import org.http4k.core.*
+import org.junit.jupiter.api.Test
 import java.time.Duration
-import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class GenerateKotlinTest {
-
-    @Test
-    fun `generates http4k request`() {
-        val requestString = Request(Method.GET, "http://gypsydave5.com").generateKotlin()
-
-        val expected =
-            """import org.http4k.core.Method
-import org.http4k.core.Request
-
-public val request: Request = Request(Method.GET, "http://gypsydave5.com")
-"""
-        assertEquals(expected, requestString)
-    }
-
-    @Test
-    fun `generates http4k response`() {
-        val responseString = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE, "http://gypsydave5.com").generateKotlin()
-
-        val expected =
-            """import org.http4k.core.Response
-import org.http4k.core.Status
-
-public val response: Response = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
-"""
-        assertEquals(expected, responseString)
-    }
+class HttpTransactionTest {
 
     @Test
     fun `generates a series of http4k requests and responses`() {
@@ -68,6 +44,7 @@ public val secondResponse: Response = Response(Status.NOT_FOUND)""".trimIndent()
 
         assertEquals(expected, commsString)
     }
+
 }
 
 private fun HttpTransaction.Companion.fromPair(pair: Pair<Request, Response>): HttpTransaction =

@@ -1,14 +1,10 @@
 package io.github.gypsydave5.twofourkay.generateKotlin
 
-import com.squareup.kotlinpoet.MemberName
-import com.squareup.kotlinpoet.asClassName
 import org.http4k.core.Status
 
 internal fun String.unescapePercents() = replace("%", "%%")
 
-internal fun Status.toMemberName(): MemberName = MemberName(Status.Companion::class.asClassName(), toName())
-
-internal fun Status.toName(): String = when (this) {
+internal fun Status.toName(): String? = when (this) {
     Status.OK -> "OK"
     Status.CREATED -> "CREATED"
     Status.ACCEPTED -> "ACCEPTED"
@@ -56,5 +52,5 @@ internal fun Status.toName(): String = when (this) {
     Status.GATEWAY_TIMEOUT -> "GATEWAY_TIMEOUT"
     Status.CLIENT_TIMEOUT -> "CLIENT_TIMEOUT"
     Status.HTTP_VERSION_NOT_SUPPORTED -> "HTTP_VERSION_NOT_SUPPORTED"
-    else -> "OK"
+    else -> null
 }
