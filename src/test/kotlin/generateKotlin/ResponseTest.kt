@@ -1,6 +1,7 @@
 package generateKotlin
 
 import io.github.gypsydave5.twofourkay.generateKotlin.generateKotlin
+import org.http4k.core.HttpMessage
 import org.http4k.core.Response
 import org.http4k.core.Status
 import kotlin.test.Test
@@ -30,6 +31,20 @@ public val response: Response = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
 import org.http4k.core.Status
 
 public val response: Response = Response(Status(431, "Request Header Fields Too Large"))
+"""
+        assertEquals(expected, responseString)
+    }
+
+    @Test
+    fun `explicitly show the HTTP version when it is not 1_1`() {
+        val responseString = Response(Status.OK, HttpMessage.HTTP_2).generateKotlin()
+
+        val expected =
+            """import org.http4k.core.HttpMessage
+import org.http4k.core.Response
+import org.http4k.core.Status
+
+public val response: Response = Response(Status.OK, HttpMessage.HTTP_2)
 """
         assertEquals(expected, responseString)
     }
