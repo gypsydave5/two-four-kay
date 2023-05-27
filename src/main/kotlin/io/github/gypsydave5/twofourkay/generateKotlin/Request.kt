@@ -28,19 +28,17 @@ fun Request.asCodeBlock(): CodeBlock {
         uri.toString().removeSuffix("?" + uri.query),
         httpVersionCodeBlock(version)
     )
-//        .add(httpVersionCodeBlock(version))
-//        .add(")")
 
     uri.queries().forEach {
-        base.add("\n\t.query(\"\"\"${it.first}\"\"\", \"\"\"${it.second?.unescapePercents()?.trim('\"')}\"\"\")")
+        base.add("\n\t.query(${it.first.tripleQuote()}, ${it.second?.unescapePercents()?.trim('\"')?.tripleQuote()})")
     }
 
     headers.forEach {
-        base.add("\n\t.header(\"\"\"${it.first}\"\"\", \"\"\"${it.second?.unescapePercents()?.trim('\"')}\"\"\")")
+        base.add("\n\t.header(${it.first.tripleQuote()}, ${it.second?.unescapePercents()?.trim('\"')?.tripleQuote()})")
     }
 
     bodyString().takeIf {
         it.isNotEmpty()
-    }?.unescapePercents()?.also { base.add("\n\t.body(\"\"\"$it\"\"\")") }
+    }?.unescapePercents()?.also { base.add("\n\t.body(${it.tripleQuote()})") }
     return base.build()
 }

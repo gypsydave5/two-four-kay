@@ -28,6 +28,7 @@ internal fun httpVersionCodeBlock(version: String): CodeBlock {
     return base.build()
 }
 
+internal fun String.tripleQuote(): String = "\"\"\"${this}\"\"\""
 
 internal fun Status.toName(): String? = when (this) {
     Status.OK -> "OK"

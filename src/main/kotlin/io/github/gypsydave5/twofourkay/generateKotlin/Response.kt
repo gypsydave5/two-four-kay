@@ -26,12 +26,12 @@ fun Response.asCodeBlock(): CodeBlock {
         )
 
     headers.forEach {
-        base.add("\n\t.header(\"\"\"${it.first}\"\"\", \"\"\"${it.second?.unescapePercents()?.trim('\"')}\"\"\")")
+        base.add("\n\t.header(${it.first.tripleQuote()}, ${it.second?.unescapePercents()?.trim('\"')?.tripleQuote()})")
     }
 
     bodyString().takeIf(String::isNotEmpty)
         ?.unescapePercents()
-        ?.also { base.add("\n\t.body(\"\"\"$it\"\"\")") }
+        ?.also { base.add("\n\t.body(${it.tripleQuote()})") }
     return base.build()
 }
 
