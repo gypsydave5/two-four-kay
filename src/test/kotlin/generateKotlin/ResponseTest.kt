@@ -23,6 +23,24 @@ public val response: Response = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
     }
 
     @Test
+    fun headers() {
+        val responseString = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
+            .header("do", "what")
+            .header("eh?", null)
+            .generateKotlin()
+
+        val expected =
+            """import org.http4k.core.Response
+import org.http4k.core.Status
+
+public val response: Response = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
+    	.header(""${'"'}do""${'"'}, ""${'"'}what""${'"'})
+    	.header(""${'"'}eh?""${'"'}, null)
+"""
+        assertEquals(expected, responseString)
+    }
+
+    @Test
     fun `when the status is not conventional, generate it in full`() {
         val responseString = Response(Status(431, "Request Header Fields Too Large")).generateKotlin()
 

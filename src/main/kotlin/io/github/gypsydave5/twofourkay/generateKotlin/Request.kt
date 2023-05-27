@@ -18,27 +18,14 @@ fun Request.generateKotlin(): String {
         .toString()
 }
 
-fun Request.asCodeBlock(): CodeBlock {
-    val base = CodeBlock.builder()
-
-    base.add(
-        "%T(%T.$method,·%S%L)",
-        Request::class.asClassName(),
-        Method::class.asClassName(),
-        uri.toString().removeSuffix("?" + uri.query),
-        httpVersionCodeBlock(version)
-    )
-
-    uri.queries().forEach {
-        base.add("\n\t.query(${it.first.tripleQuote()}, ${it.second?.unescapePercents()?.trim('\"')?.tripleQuote()})")
-    }
-
-    headers.forEach {
-        base.add("\n\t.header(${it.first.tripleQuote()}, ${it.second?.unescapePercents()?.trim('\"')?.tripleQuote()})")
-    }
-
-    bodyString().takeIf {
-        it.isNotEmpty()
-    }?.unescapePercents()?.also { base.add("\n\t.body(${it.tripleQuote()})") }
-    return base.build()
-}
+fun Request.asCodeBlock(): CodeBlock = CodeBlock.builder().add(
+    "%T(%T.$method,·%S%L)",
+    Request::class.asClassName(),
+    Method::class.asClassName(),
+    uri.toString().removeSuffix("?" + uri.query),
+    httpVersionCodeBlock(version)
+)
+    .add(uri.queries().queryCodeBlock())
+    .add(headers.headersCodeBlock())
+    .add(body)
+    .build()

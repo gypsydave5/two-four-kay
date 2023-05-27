@@ -28,7 +28,6 @@ fun List<HttpTransaction>.generateKotlin(): String {
 private fun String.capitalize() =
     this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
-// TODO: better
 private fun Int.toOrdinal(): String {
     return when (this) {
         0 -> "zeroth"

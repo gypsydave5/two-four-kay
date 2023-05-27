@@ -16,22 +16,13 @@ fun Response.generateKotlin(): String {
         .toString()
 }
 
-fun Response.asCodeBlock(): CodeBlock {
-    val base = CodeBlock.builder()
-        .add(
-            """%T(%L%L)""",
-            Response::class.asClassName(),
-            status.toCodeBlock(),
-            httpVersionCodeBlock(version)
-        )
-
-    headers.forEach {
-        base.add("\n\t.header(${it.first.tripleQuote()}, ${it.second?.unescapePercents()?.trim('\"')?.tripleQuote()})")
-    }
-
-    bodyString().takeIf(String::isNotEmpty)
-        ?.unescapePercents()
-        ?.also { base.add("\n\t.body(${it.tripleQuote()})") }
-    return base.build()
-}
-
+fun Response.asCodeBlock(): CodeBlock = CodeBlock.builder()
+    .add(
+        """%T(%L%L)""",
+        Response::class.asClassName(),
+        status.toCodeBlock(),
+        httpVersionCodeBlock(version)
+    )
+    .add(headers.headersCodeBlock())
+    .add(body)
+    .build()

@@ -24,6 +24,42 @@ public val request: Request = Request(Method.GET, "http://gypsydave5.com")
     }
 
     @Test
+    fun headers() {
+        val requestString = Request(Method.GET, "http://gypsydave5.com")
+            .header("do", "what")
+            .header("eh?", null)
+            .generateKotlin()
+
+        val expected =
+            """import org.http4k.core.Method
+import org.http4k.core.Request
+
+public val request: Request = Request(Method.GET, "http://gypsydave5.com")
+    	.header(""${'"'}do""${'"'}, ""${'"'}what""${'"'})
+    	.header(""${'"'}eh?""${'"'}, null)
+"""
+        assertEquals(expected, requestString)
+    }
+
+    @Test
+    fun `query string`() {
+        val requestString = Request(Method.GET, "http://gypsydave5.com")
+            .query("do", "what")
+            .query("eh?", null)
+            .generateKotlin()
+
+        val expected =
+            """import org.http4k.core.Method
+import org.http4k.core.Request
+
+public val request: Request = Request(Method.GET, "http://gypsydave5.com")
+    	.query(""${'"'}do""${'"'}, ""${'"'}what""${'"'})
+    	.query(""${'"'}eh?""${'"'}, null)
+"""
+        assertEquals(expected, requestString)
+    }
+
+    @Test
     fun `explicitly show the HTTP version when it is not 1_1`() {
         val requestString = Request(Method.GET, "http://gypsydave5.com", HttpMessage.HTTP_2).generateKotlin()
 
