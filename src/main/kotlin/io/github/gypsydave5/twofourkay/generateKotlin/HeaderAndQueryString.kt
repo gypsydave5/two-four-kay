@@ -9,7 +9,7 @@ internal fun Parameters.queryCodeBlock() = toCodeBlock("query")
 internal fun List<Pair<String, String?>>.toCodeBlock(kind: String): CodeBlock {
     val base = CodeBlock.builder()
     forEach {
-        base.add("\n\t.$kind(${it.first.tripleQuote()}, ${it.second?.unescapePercents()?.trim('\"')?.tripleQuote()})")
+        base.add("\n\t.$kind(%S, %S)", it.first, it.second?.unescapePercents()?.trim('\"'))
     }
     return base.build()
 }

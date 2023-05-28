@@ -67,11 +67,26 @@ public val request: Request = Request(Method.GET, "http://gypsydave5.com")
         assertEquals(expected, requestString)
     }
 
+    @Test
+    fun `escapes the dollar in bodies with dollars`() {
+        val requestString = Request(Method.GET, "http://gypsydave5.com")
+            .body("${'$'}body")
+            .generateKotlin()
+
+        val expected =
+            """import org.http4k.core.Method
+import org.http4k.core.Request
+
+public val request: Request = Request(Method.GET, "http://gypsydave5.com")
+    	.body("${'$'}{'$'}body")
+"""
+        assertEquals(expected, requestString)
+    }
 
     @Test
-    fun headers() {
+    fun `headers with dollars`() {
         val requestString = Request(Method.GET, "http://gypsydave5.com")
-            .header("do", "what")
+            .header("do", "\$what")
             .header("eh?", null)
             .generateKotlin()
 
@@ -80,16 +95,16 @@ public val request: Request = Request(Method.GET, "http://gypsydave5.com")
 import org.http4k.core.Request
 
 public val request: Request = Request(Method.GET, "http://gypsydave5.com")
-    	.header(""${'"'}do""${'"'}, ""${'"'}what""${'"'})
-    	.header(""${'"'}eh?""${'"'}, null)
+    	.header("do", "${'$'}{'${'$'}'}what")
+    	.header("eh?", null)
 """
         assertEquals(expected, requestString)
     }
 
     @Test
-    fun `query string`() {
+    fun `query string (with dollars)`() {
         val requestString = Request(Method.GET, "http://gypsydave5.com")
-            .query("do", "what")
+            .query("do", "\$what")
             .query("eh?", null)
             .generateKotlin()
 
@@ -98,8 +113,8 @@ public val request: Request = Request(Method.GET, "http://gypsydave5.com")
 import org.http4k.core.Request
 
 public val request: Request = Request(Method.GET, "http://gypsydave5.com")
-    	.query(""${'"'}do""${'"'}, ""${'"'}what""${'"'})
-    	.query(""${'"'}eh?""${'"'}, null)
+    	.query("do", "${'$'}{'${'$'}'}what")
+    	.query("eh?", null)
 """
         assertEquals(expected, requestString)
     }
