@@ -70,7 +70,7 @@ public val request: Request = Request(Method.GET, "http://gypsydave5.com")
     @Test
     fun `escapes the dollar in bodies with dollars`() {
         val requestString = Request(Method.GET, "http://gypsydave5.com")
-            .body("${'$'}body")
+            .body("\$body")
             .generateKotlin()
 
         val expected =

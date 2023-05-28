@@ -4,7 +4,7 @@ import io.github.gypsydave5.twofourkay.har.toHttpTransactions
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ParseHarCollectionTest {
+class ParseHarHttpTransactionsTest {
 
     @Test
     fun `parses a whole HAR as a collection of requests and responses`() {

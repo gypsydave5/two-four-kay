@@ -70,7 +70,7 @@ public val response: Response = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
     @Test
     fun headers() {
         val responseString = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
-            .header("do", "what")
+            .header("do", "\$what")
             .header("eh?", null)
             .generateKotlin()
 
@@ -79,8 +79,8 @@ public val response: Response = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
 import org.http4k.core.Status
 
 public val response: Response = Response(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
-    	.header(""${'"'}do""${'"'}, ""${'"'}what""${'"'})
-    	.header(""${'"'}eh?""${'"'}, null)
+    	.header("do", "${'$'}{'${'$'}'}what")
+    	.header("eh?", null)
 """
         assertEquals(expected, responseString)
     }
