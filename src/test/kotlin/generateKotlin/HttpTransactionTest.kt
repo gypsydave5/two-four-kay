@@ -14,11 +14,6 @@ class HttpTransactionTest {
             listOf(
                 Request(Method.GET, "http://gypsydave5.com") to Response(Status.OK),
                 Request(Method.GET, "http://lisastansfield.com/my-baby") to Response(Status.NOT_FOUND),
-//                Request(Method.GET, "http://oldgrey.com", HTTP_2) to Response(Status.HTTP_VERSION_NOT_SUPPORTED),
-//                Request(Method.POST, "http://andrew.wk?q=when+its+time+to+party")
-//                        to Response(Status.OK).body("PARTY HARD"),
-//                Request(Method.PATCH, "http://kurious.oranj").form("name", "priest").form("size", "big")
-//                        to Response(Status.OK).body("DRINK THE LONG DRAUGHT DOWN"),
             )
                 .map(HttpTransaction.Companion::fromPair)
                 .generateKotlin().trimIndent()

@@ -11,7 +11,6 @@ import java.io.FileNotFoundException
 class App : HttpHandler {
     override fun invoke(request: Request): Response {
         return routing(request)
-        // return Response(Status.OK).body(request.bodyString().parseHar().toHttpTransactions().generateKotlin())
     }
 }
 
