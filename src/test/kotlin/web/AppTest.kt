@@ -6,6 +6,7 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 class AppTest {
@@ -46,5 +47,14 @@ class AppTest {
             |
         """.trimMargin()
         assertEquals(expected, response.bodyString())
+    }
+
+    @Test
+    fun `has some sort of index page`() {
+        val app = App()
+        val request = Request(Method.GET, "/")
+        val response = app(request)
+
+        assertContains(response.bodyString(), "Two Four Kay")
     }
 }
