@@ -1,5 +1,6 @@
 package har
 
+import dev.forkhandles.result4k.orThrow
 import io.github.gypsydave5.twofourkay.har.HAR
 import io.github.gypsydave5.twofourkay.har.parseHar
 import org.http4k.core.*
@@ -134,7 +135,7 @@ fun getResourceAsText(path: String): String =
     File("src/test/resources/$path").readText()
 
 fun getHarFromResource(path: String): HAR =
-    getResourceAsText(path).parseHar()
+    getResourceAsText(path).parseHar().orThrow()
 
 private fun getFirstRequestFrom(path: String): HarRequest =
     getHarFromResource(path).log.entries.first().request

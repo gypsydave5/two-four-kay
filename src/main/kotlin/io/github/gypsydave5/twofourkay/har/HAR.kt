@@ -2,6 +2,9 @@
 
 package io.github.gypsydave5.twofourkay.har
 
+import dev.forkhandles.result4k.Result
+import dev.forkhandles.result4k.mapFailure
+import dev.forkhandles.result4k.resultFrom
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -15,9 +18,12 @@ import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonNames
 import kotlinx.serialization.json.JsonPrimitive
 
-fun String.parseHar(): HAR {
-    return Json.decodeFromString<HAR>(this)
+fun String.parseHar(): Result<HAR, Error> {
+    return resultFrom { Json.decodeFromString<HAR>(this) }
+        .mapFailure(::ParseHarError)
 }
+
+class ParseHarError(ex: Exception) : Error("Unable to parse HAR: ${ex.message}")
 
 
 @Serializable

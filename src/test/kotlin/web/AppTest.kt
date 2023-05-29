@@ -4,6 +4,7 @@ import har.getResourceAsText
 import io.github.gypsydave5.twofourkay.web.App
 import org.http4k.core.Method
 import org.http4k.core.Request
+import org.http4k.core.Status
 
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -17,8 +18,17 @@ class AppTest {
         val request = Request(Method.POST, "/har").body(getResourceAsText("simplest.har"))
         val response = app(request)
 
-        val expected = transactions
-        assertEquals(expected, response.bodyString())
+        assertEquals(transactions, response.bodyString())
+    }
+
+    @Test
+    fun `tells you you're doing it wrong if you aren't POSTing a HAR`() {
+        val app = App()
+        val request = Request(Method.POST, "/har").body("not a har")
+        val response = app(request)
+
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertContains(response.bodyString(), "Unable to parse HAR")
     }
 
     @Test
@@ -28,8 +38,30 @@ class AppTest {
 
         val response = app(request)
 
-        val expected = transactions
-        assertEquals(expected, response.bodyString())
+        assertEquals(Status.OK, response.status)
+        assertEquals(transactions, response.bodyString())
+    }
+
+    @Test
+    fun `tells you you're doing it wrong if you're not sending a HAR`() {
+        val app = App()
+        val request = Request(Method.GET, "/har").query("har", "not a har")
+
+        val response = app(request)
+
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertContains(response.bodyString(), "Unable to parse HAR")
+    }
+
+    @Test
+    fun `tells you you're doing it wrong if you've not got a har parameter`() {
+        val app = App()
+        val request = Request(Method.GET, "/har")
+
+        val response = app(request)
+
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertContains(response.bodyString(), "Missing har parameter in query string")
     }
 
     @Test

@@ -1,6 +1,11 @@
 package io.github.gypsydave5.twofourkay.web
 
+import dev.forkhandles.result4k.asResultOr
+import dev.forkhandles.result4k.flatMap
+import dev.forkhandles.result4k.map
+import dev.forkhandles.result4k.recover
 import io.github.gypsydave5.twofourkay.generateKotlin.generateKotlin
+import io.github.gypsydave5.twofourkay.har.HAR
 import io.github.gypsydave5.twofourkay.har.parseHar
 import io.github.gypsydave5.twofourkay.har.toHttpTransactions
 import org.http4k.core.*
@@ -23,10 +28,21 @@ private fun routing(request: Request): Response {
 
 private val harHandler = routes(
     Method.POST bind { request ->
-        Response(Status.OK).body(request.bodyString().parseHar().toHttpTransactions().generateKotlin())
+        request.bodyString().parseHar()
+            .map(HAR::toHttpTransactions)
+            .map(List<HttpTransaction>::generateKotlin)
+            .map { Response(Status.OK).body(it) }
+            .recover { Response(Status.BAD_REQUEST).body(it.toString()) }
     },
+
     Method.GET bind { request ->
-        Response(Status.OK).body(request.query("har")!!.parseHar().toHttpTransactions().generateKotlin())
+        request.query("har")
+            .asResultOr { IllegalArgumentException("Missing har parameter in query string") }
+            .flatMap { it.parseHar() }
+            .map(HAR::toHttpTransactions)
+            .map(List<HttpTransaction>::generateKotlin)
+            .map { Response(Status.OK).body(it) }
+            .recover { Response(Status.BAD_REQUEST).body(it.message ?: "unknown error") }
     }
 )
 

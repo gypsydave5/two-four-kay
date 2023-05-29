@@ -17,6 +17,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.1")
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
 
+    implementation("dev.forkhandles:result4k:2.6.0.0")
+
     implementation(platform("org.http4k:http4k-bom:4.44.1.0"))
     implementation("org.http4k:http4k-core")
     implementation("org.http4k:http4k-server-undertow")
