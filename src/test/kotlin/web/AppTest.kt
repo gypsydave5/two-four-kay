@@ -17,7 +17,32 @@ class AppTest {
         val request = Request(Method.POST, "/har").body(getResourceAsText("simplest.har"))
         val response = app(request)
 
-        val expected = """
+        val expected = transactions
+        assertEquals(expected, response.bodyString())
+    }
+
+    @Test
+    fun `can also convert a HAR from a GET request with a query string`() {
+        val app = App()
+        val request = Request(Method.GET, "/har").query("har", getResourceAsText("simplest.har"))
+
+        val response = app(request)
+
+        val expected = transactions
+        assertEquals(expected, response.bodyString())
+    }
+
+    @Test
+    fun `has some sort of index page`() {
+        val app = App()
+        val request = Request(Method.GET, "/")
+        val response = app(request)
+
+        assertContains(response.bodyString(), "Two Four Kay")
+    }
+}
+
+val transactions = """
             |import org.http4k.core.Method
             |import org.http4k.core.Request
             |import org.http4k.core.Response
@@ -46,15 +71,3 @@ class AppTest {
             |    	.body("goodbye world")
             |
         """.trimMargin()
-        assertEquals(expected, response.bodyString())
-    }
-
-    @Test
-    fun `has some sort of index page`() {
-        val app = App()
-        val request = Request(Method.GET, "/")
-        val response = app(request)
-
-        assertContains(response.bodyString(), "Two Four Kay")
-    }
-}

@@ -16,14 +16,20 @@ class App : HttpHandler {
 
 private fun routing(request: Request): Response {
     return routes(
-        "/har" bind Method.POST to harHandler,
+        "/har" bind harHandler,
         "/" bind Method.GET to rootHandler
     )(request)
 }
 
-private val harHandler = { request: Request ->
-    Response(Status.OK).body(request.bodyString().parseHar().toHttpTransactions().generateKotlin())
-}
+private val harHandler = routes(
+    Method.POST bind { request ->
+        Response(Status.OK).body(request.bodyString().parseHar().toHttpTransactions().generateKotlin())
+    },
+    Method.GET bind { request ->
+        Response(Status.OK).body(request.query("har")!!.parseHar().toHttpTransactions().generateKotlin())
+    }
+)
+
 
 private val rootHandler = { request: Request ->
     Response(Status.OK).body(getResourceAsText("/index.html"))
