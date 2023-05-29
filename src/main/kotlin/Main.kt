@@ -4,5 +4,5 @@ import org.http4k.server.asServer
 
 fun main() {
     val app = App()
-    app.asServer(Undertow(80)).start()
+    app.asServer(Undertow(8080)).start()
 }
