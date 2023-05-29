@@ -14,8 +14,8 @@ ADD gradle.properties .
 
 RUN pwd
 
-RUN gradle build
+RUN gradle --no-daemon build
 
 COPY src ./src
 
-CMD ["gradle", "run"]
+CMD ["gradle", "--no-daemon", "run"]
