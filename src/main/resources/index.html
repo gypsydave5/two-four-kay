@@ -3,13 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <title>Two Four Kay</title>
+    <style>
+        textarea {
+            width: 300px;
+            height: 700px;
+        }
+    </style>
 </head>
 <body>
 <h1>Two Four Kay </h1>
 
 <form action="/har" method="get">
     <label for="har">HAR goes here</label>
-    <textarea id="har" name="har"></textarea>
+    <textarea id="har" name="har">{
+  "log": {
+    "version": "1.2",
+    "creator": {
+      "name": "Firefox",
+      "version": "113.0.1"
+    },
+    "browser": {
+      "name": "Firefox",
+      "version": "113.0.1"
+    },
+    "pages": [
+      {
+        "startedDateTime": "2023-05-19T13:04:51.825+01:00",
+        "id": "page_1",
+        "title": "website",
+        "pageTimings": {
+          "onContentLoad": 210,
+          "onLoad": 213
+        }
+      }
+    ],
+    "entries": [
+      {
+        "pageref": "page_1",
+        "startedDateTime": "2023-05-19T13:04:51.825+01:00",
+        "request": {
+          "bodySize": 0,
+          "method": "GET",
+          "url": "http://gypsydave5.com/",
+          "httpVersion": "HTTP/1.1",
+          "headers": [
+            {
+              "name": "Host",
+              "value": "gypsydave5.com"
+            }
+          ],
+          "cookies": [],
+          "queryString": [],
+          "headersSize": 486
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "HTTP/1.1",
+          "headers": [
+            {
+              "name": "content-type",
+              "value": "text/plain"
+            },
+            {
+              "name": "content-length",
+              "value": "11"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "mimeType": "text/plain",
+            "size": 11,
+            "text": "hello world"
+          },
+          "redirectURL": "",
+          "headersSize": 293,
+          "bodySize": 2583
+        },
+        "cache": {},
+        "timings": {
+          "blocked": 91,
+          "dns": 0,
+          "connect": 91,
+          "ssl": 0,
+          "send": 0,
+          "wait": 92,
+          "receive": 0
+        },
+        "time": 274,
+        "_securityState": "insecure",
+        "serverIPAddress": "108.62.211.223",
+        "connection": "80"
+      },
+      {
+        "pageref": "page_1",
+        "startedDateTime": "2023-05-19T13:04:51.825+01:00",
+        "request": {
+          "bodySize": 0,
+          "method": "GET",
+          "url": "http://gypsydave5.com/",
+          "httpVersion": "HTTP/1.1",
+          "headers": [
+            {
+              "name": "Host",
+              "value": "gypsydave5.com"
+            }
+          ],
+          "cookies": [],
+          "queryString": [],
+          "headersSize": 486
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "HTTP/1.1",
+          "headers": [
+            {
+              "name": "content-type",
+              "value": "text/plain"
+            },
+            {
+              "name": "content-length",
+              "value": "13"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "mimeType": "text/plain",
+            "size": 13,
+            "text": "goodbye world"
+          },
+          "redirectURL": "",
+          "headersSize": 293,
+          "bodySize": 2583
+        },
+        "cache": {},
+        "timings": {
+          "blocked": 91,
+          "dns": 0,
+          "connect": 91,
+          "ssl": 0,
+          "send": 0,
+          "wait": 92,
+          "receive": 0
+        },
+        "time": 274,
+        "_securityState": "insecure",
+        "serverIPAddress": "108.62.211.223",
+        "connection": "80"
+      }
+    ]
+  }
+}</textarea>
     <input type="submit">
 </form>
 </body>
