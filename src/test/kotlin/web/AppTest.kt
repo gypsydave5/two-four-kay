@@ -68,6 +68,15 @@ class AppTest {
     }
 
     @Test
+    fun `has some sort of index page`() {
+        val app = App()
+        val request = Request(Method.GET, "/")
+        val response = app(request)
+
+        assertContains(response.bodyString(), "Two Four Kay")
+    }
+
+    @Test
     fun `you can use the index page to submit a form`() {
         val app = App()
 
@@ -79,15 +88,6 @@ class AppTest {
         assertEquals(Status.OK, driver.status)
 
         assertEquals(transactions, driver.pageSource)
-    }
-
-    @Test
-    fun `has some sort of index page`() {
-        val app = App()
-        val request = Request(Method.GET, "/")
-        val response = app(request)
-
-        assertContains(response.bodyString(), "Two Four Kay")
     }
 }
 
