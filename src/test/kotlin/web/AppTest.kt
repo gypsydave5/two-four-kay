@@ -6,6 +6,9 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 
+import org.http4k.webdriver.Http4kWebDriver
+import org.openqa.selenium.By
+
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -62,6 +65,20 @@ class AppTest {
 
         assertEquals(Status.BAD_REQUEST, response.status)
         assertContains(response.bodyString(), "Missing har parameter in query string")
+    }
+
+    @Test
+    fun `you can use the index page to submit a form`() {
+        val app = App()
+
+        val driver = Http4kWebDriver(app)
+
+        driver.navigate().to("/")
+        driver.findElement(By.cssSelector("textarea"))?.sendKeys(getResourceAsText("simplest.har"))
+        driver.findElement(By.cssSelector("form"))?.submit()
+        assertEquals(Status.OK, driver.status)
+
+        assertEquals(transactions, driver.pageSource)
     }
 
     @Test
