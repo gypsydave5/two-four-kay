@@ -1,42 +1,49 @@
 grammar Curl;
 
-import url;
-
-
 /*
  * Parser Rules
  */
 
-curl : CURL_COMMAND request? uri EOF;
+curl : CURL_COMMAND opts myUri EOF;
 
-//options: option* ;
+myUri : UNQUOTED_STRING | ((SQ | DQ)? UNQUOTED_STRING (SQ | DQ)?);
 
-option :  request ;
+opts: option* ;
 
-request : REQUEST_FLAG  UNQUOTED_STRING ;
+option :  requestFlag | headerFlag ;
+
+requestFlag : REQUEST_FLAG  UNQUOTED_STRING ;
+
+
+headerFlag : HEADER_FLAG header ;
+
+header: UNQUOTED_STRING | headerKeyValue ;
+
+headerKeyValue: SQ headerKey headerValue SQ;
+
+headerKey: UNQUOTED_STRING;
+
+headerValue: UNQUOTED_STRING;
 
 /*
  * Lexer Rules
  */
 
+
 CURL_COMMAND : 'curl';
 
 REQUEST_FLAG : '--request' | '-X';
 
+HEADER_FLAG : '-H';
+
+UNQUOTED_STRING : ~['" ]+;
+
+SQ : '\'' ;
+
+DQ : '"' ;
+
+COLON: ':' ;
+
 WHITESPACE : ' '+ -> skip ;
 
-UNQUOTED_STRING : UPPERCASE+;
-
-//fragment LOWERCASE  : [a-z] ;
-//
-fragment UPPERCASE  : [A-Z] ;
-
-//QUOTED_STRING : '"' STRING? '"';
-//STRING : STRING_CHARACTER+;
-//fragment STRING_CHARACTER :  ~["\\] | ESCSEQ;
-//fragment ESCSEQ : '\\' [tnfr"'\\];
-
-
-//fragment FLAGNAME : ( UPPERCASE | LOWERCASE | '-' )+;
-
-
+H_KEY : ~['" :]+':';
