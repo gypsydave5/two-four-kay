@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.8.0"
     kotlin("plugin.serialization") version "1.8.21"
+    antlr
     application
 }
 
@@ -29,6 +30,8 @@ dependencies {
     implementation("dev.forkhandles:result4k:2.5.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation(kotlin("reflect"))
+
+    antlr("org.antlr:antlr4:4.9.3")
 }
 
 tasks.test {

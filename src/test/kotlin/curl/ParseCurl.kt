@@ -1,9 +1,11 @@
 package curl
 
+import CurlLexer
+import CurlParser
+import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonTokenStream
 import org.http4k.core.Method
 import org.http4k.core.Request
-import org.http4k.core.Uri
-import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -44,7 +46,7 @@ class ParseCurlTest {
 
     @Test
     fun `can parse the method`() {
-        val curl = "curl -X POST 'http://gypsydave5.com'"
+        val curl = "curl --request POST http://gypsydave5.com"
 
         val request = Request.parseCurl(curl)
 
@@ -55,35 +57,15 @@ class ParseCurlTest {
 }
 
 private fun Request.Companion.parseCurl(curl: String): Request {
-    val input = Scanner(curl).useDelimiter(" ")
-    var request = Request(Method.GET, "")
-
-    if (input.hasNext("curl")) {
-        input.next()
-    }
-
-    while (input.hasNext()) {
-        if (input.hasNext("-.*")) {
-            request = parseFlag(input, request)
-        }
-
-        request = parseUri(input, request)
-    }
+    val charStream = CharStreams.fromString(curl)
+    val lexer = CurlLexer(charStream)
+    val commonTokenStream = CommonTokenStream(lexer)
+    val parser = CurlParser(commonTokenStream)
+    val tree = parser.curl()
+    println(tree.uri().text)
 
 
+    val method = Method.valueOf(tree?.request()?.UNQUOTED_STRING()?.text ?: "GET")
 
-    return request
-}
-
-private fun String.removeSurroundingQuotes() = trim()
-    .removeSurrounding("\"")
-    .removeSurrounding("'")
-
-fun parseFlag(input: Scanner, request: Request): Request {
-    println(">>>>>" + input.next())
-    return request.method(Method.valueOf(input.next().removeSurroundingQuotes()))
-}
-
-fun parseUri(input: Scanner, request: Request): Request {
-    return request.uri(Uri.of(input.next().removeSurroundingQuotes()))
+    return Request(method, tree.uri().text)
 }
