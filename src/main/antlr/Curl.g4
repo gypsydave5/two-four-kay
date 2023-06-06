@@ -16,7 +16,7 @@ url: STRING | DQUOTED_STRING | SQUOTED_STRING;
 
 DQUOTED_STRING: '"' (~('"' | '\\' | '\r' | '\n') | '\\' .)* '"';
 SQUOTED_STRING: '\'' (~('\'' | '\\' | '\r' | '\n') | '\\' .)* '\'';
-OPTION_STRING: '-' ~[ \t\r\n'"]+;
+OPTION_STRING: '-' STRING;
 STRING: ~[ \t\r\n'"]+;
 
 WS: [ \t\r\n]+ -> skip;
