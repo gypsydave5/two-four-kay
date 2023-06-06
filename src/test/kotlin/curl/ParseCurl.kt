@@ -79,6 +79,18 @@ class ParseCurlTest {
 
         assertEquals(expected, request)
     }
+
+    @Test
+    fun `is cool with the options appearing after the url`() {
+        val curl = "curl http://gypsydave5.com -H 'Connection: keep-alive'"
+
+        val request = Request.parseCurl(curl)
+
+        val expected = Request(Method.GET, "http://gypsydave5.com")
+            .header("Connection", "keep-alive")
+
+        assertEquals(expected, request)
+    }
 }
 
 private fun Request.Companion.parseCurl(curl: String): Request {

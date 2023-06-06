@@ -2,7 +2,7 @@ grammar Curl;
 
 parse: expression EOF;
 
-expression: 'curl' urlOptions? url;
+expression: 'curl' (urlOptions? url | url urlOptions?) ;
 
 urlOptions: option+;
 
