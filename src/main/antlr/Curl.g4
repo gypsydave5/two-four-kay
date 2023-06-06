@@ -1,49 +1,21 @@
 grammar Curl;
 
-/*
- * Parser Rules
- */
+parse: expression EOF;
 
-curl : CURL_COMMAND opts myUri EOF;
+expression: 'curl' urlOptions? url;
 
-myUri : UNQUOTED_STRING | ((SQ | DQ)? UNQUOTED_STRING (SQ | DQ)?);
+urlOptions: option+;
 
-opts: option* ;
+option: optionName optionValue;
 
-option :  requestFlag | headerFlag ;
+optionName: '-X' | '-H' | '-d' | '-u' | '-L' | '-G' | '-A' | '-e' | '--request' | '--header' | '--data' | '--user' | '--location' | '--get' | '--user-agent' | '--referer';
 
-requestFlag : REQUEST_FLAG  UNQUOTED_STRING ;
+optionValue: STRING | DQUOTED_STRING | SQUOTED_STRING;
 
+url: STRING | DQUOTED_STRING | SQUOTED_STRING;
 
-headerFlag : HEADER_FLAG header ;
-
-header: UNQUOTED_STRING | headerKeyValue ;
-
-headerKeyValue: SQ headerKey headerValue SQ;
-
-headerKey: UNQUOTED_STRING;
-
-headerValue: UNQUOTED_STRING;
-
-/*
- * Lexer Rules
- */
-
-
-CURL_COMMAND : 'curl';
-
-REQUEST_FLAG : '--request' | '-X';
-
-HEADER_FLAG : '-H';
-
-UNQUOTED_STRING : ~['" ]+;
-
-SQ : '\'' ;
-
-DQ : '"' ;
-
-COLON: ':' ;
-
-WHITESPACE : ' '+ -> skip ;
-
-H_KEY : ~['" :]+':';
+DQUOTED_STRING: '"' (~('"' | '\\' | '\r' | '\n') | '\\' .)* '"';
+SQUOTED_STRING: '\'' (~('\'' | '\\' | '\r' | '\n') | '\\' .)* '\'';
+OPTION_STRING: '-' ~[ \t\r\n'"]+;
+STRING: ~[ \t\r\n'"]+;
+WS: [ \t\r\n]+ -> skip;

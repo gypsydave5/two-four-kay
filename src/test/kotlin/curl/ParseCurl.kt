@@ -1,10 +1,11 @@
 package curl
 
+import CurlBaseListener
 import CurlLexer
 import CurlParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
-import org.http4k.core.Headers
+import org.antlr.v4.runtime.tree.ParseTreeWalker
 import org.http4k.core.Method
 import org.http4k.core.Request
 import kotlin.test.Test
@@ -81,32 +82,69 @@ class ParseCurlTest {
 }
 
 private fun Request.Companion.parseCurl(curl: String): Request {
-    val charStream = CharStreams.fromString(curl)
-    val lexer = CurlLexer(charStream)
+    val input = CharStreams.fromString(curl)
+    val lexer = CurlLexer(input)
+    val tokens = CommonTokenStream(lexer)
+    println(CurlLexer(CharStreams.fromString(curl)).allTokens.map {
+        it.text + " : " + CurlLexer.VOCABULARY.getSymbolicName(
+            it.type
+        )
+    })
+    val parser = CurlParser(tokens)
 
-    val commonTokenStream = CommonTokenStream(lexer)
-    val parser = CurlParser(commonTokenStream)
-    val tree = parser.curl()
+    val tree = parser.parse()
 
-    val methodString = getMethodString(tree)
-    val method = Method.valueOf(methodString)
+    println(tree.expression().url().text)
+    val listener = CurlListener()
+    ParseTreeWalker.DEFAULT.walk(listener, tree)
 
-    val headers: Headers = tree?.opts()?.option()
-        ?.filter { it.headerFlag() != null }
-        ?.fold(emptyList()) { h, it ->
-            val key = it.headerFlag().header().headerKeyValue().headerKey().text.dropLast(1)
-            val value = it.headerFlag().header().headerKeyValue().headerValue().text
-            h + (key to value)
-        } ?: emptyList()
-
-    return Request(method, tree.myUri().UNQUOTED_STRING().text).headers(headers)
+    val request = listener.buildRequest()
+    return request
 }
 
-private fun getMethodString(tree: CurlParser.CurlContext?) =
-    tree?.opts()?.option()
-        ?.filter { it.requestFlag() != null }
-        ?.lastOrNull()
-        ?.requestFlag()?.UNQUOTED_STRING()?.text ?: "GET"
+
+class CurlListener : CurlBaseListener() {
+    private var url: String? = null
+    private var method: Method? = null
+    private var headers: MutableList<Pair<String, String>> = mutableListOf()
+    private var data: String? = null
+
+    override fun enterUrl(ctx: CurlParser.UrlContext) {
+        println(ctx.text)
+        url = ctx.text.replace("(^['\"]|['\"]$)".toRegex(), "")
+    }
+
+    override fun enterOption(ctx: CurlParser.OptionContext) {
+        val optionName = ctx.optionName().text
+        val optionValue = ctx.optionValue()?.text?.replace("(^['\"]|['\"]$)".toRegex(), "")
+
+        when (optionName) {
+            "-X", "--request" -> method = Method.valueOf(optionValue ?: "GET")
+            "-H", "--header" -> {
+                val headerParts = optionValue?.split(":") ?: return
+                if (headerParts.size == 2) {
+                    val headerKey = headerParts[0].trim()
+                    val headerValue = headerParts[1].trim()
+                    headers.add(headerKey to headerValue)
+                }
+            }
+
+            "d", "data" -> data = optionValue
+            // Handle other options
+        }
+    }
+
+    fun buildRequest(): Request {
+        var request = Request(method ?: Method.GET, url ?: "")
+            .headers(headers)
+        
+        data?.let { body ->
+            request = request.body(body)
+        }
+
+        return request
+    }
+}
 
 private val exampleCurlFromFirefox = """curl 'https://blog.gypsydave5.com/' 
     |-H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0' 
