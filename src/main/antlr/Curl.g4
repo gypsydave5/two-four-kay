@@ -8,7 +8,7 @@ urlOptions: option+;
 
 option: optionName optionValue?;
 
-optionName: '-X' | '-H' | '-d' | '-u' | '-L' | '-G' | '-A' | '-e' | '--request' | '--header' | '--data' | '--data-raw' | '--user' | '--location' | '--get' | '--user-agent' | '--referer' | '--compressed';
+optionName: OPTION_STRING;
 
 optionValue: STRING | DQUOTED_STRING | SQUOTED_STRING;
 
