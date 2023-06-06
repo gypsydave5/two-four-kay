@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.tree.ParseTreeWalker
 import org.http4k.core.Method
 import org.http4k.core.Request
+import org.http4k.core.Uri
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -91,6 +92,17 @@ class ParseCurlTest {
 
         assertEquals(expected, request)
     }
+
+    @Test
+    fun `handles header values with colons in gracefully`() {
+        val curl = "curl 'https://blog.gypsydave5.com/' -H 'If-Modified-Since: Wed, 10 Aug 2022 09:16:26 GMT'"
+        val request = Request.parseCurl(curl)
+
+        val expected = Request(Method.GET, "https://blog.gypsydave5.com/")
+            .header("If-Modified-Since", "Wed, 10 Aug 2022 09:16:26 GMT")
+
+        assertEquals(expected, request)
+    }
 }
 
 private fun Request.Companion.parseCurl(curl: String): Request {
@@ -109,45 +121,38 @@ private fun Request.Companion.parseCurl(curl: String): Request {
 
 
 class CurlListener : CurlBaseListener() {
-    private var url: String? = null
-    private var method: Method? = null
-    private var headers: MutableList<Pair<String, String>> = mutableListOf()
-    private var data: String? = null
+    private var request: Request = Request(Method.GET, "")
 
     override fun enterUrl(ctx: CurlParser.UrlContext) {
-        println(ctx.text)
-        url = ctx.text.replace("(^['\"]|['\"]$)".toRegex(), "")
+        request = request.uri(Uri.of(ctx.text.stripQuotes()))
     }
 
     override fun enterOption(ctx: CurlParser.OptionContext) {
         val optionName = ctx.optionName().text
-        val optionValue = ctx.optionValue()?.text?.replace("(^['\"]|['\"]$)".toRegex(), "")
+        val optionValue = ctx.optionValue()?.text?.stripQuotes()
 
-        when (optionName) {
-            "-X", "--request" -> method = Method.valueOf(optionValue ?: "GET")
+        request = when (optionName) {
+            "-X", "--request" -> optionValue?.let { request.method(Method.valueOf(it)) }
             "-H", "--header" -> {
-                val headerParts = optionValue?.split(":") ?: return
-                if (headerParts.size == 2) {
-                    val headerKey = headerParts[0].trim()
-                    val headerValue = headerParts[1].trim()
-                    headers.add(headerKey to headerValue)
-                }
+                optionValue
+                    ?.split(':', ignoreCase = false, limit = 2)
+                    ?.let { request.header(it.first().trim(), it[1].trim()) }
             }
 
-            "d", "data" -> data = optionValue
-        }
+            "d", "data" -> optionValue?.let { request.body(it) }
+            else -> null
+        } ?: request
     }
 
     fun buildRequest(): Request {
-        var request = Request(method ?: Method.GET, url ?: "")
-            .headers(headers)
-
-        data?.let { body ->
-            request = request.body(body)
-        }
-
         return request
     }
+}
+
+private fun String.stripQuotes(): String = when (first()) {
+    '\'' -> removeSurrounding("\'")
+    '\"' -> removeSurrounding("\"")
+    else -> this
 }
 
 private val exampleCurlFromFirefox = """curl 'https://blog.gypsydave5.com/' 
