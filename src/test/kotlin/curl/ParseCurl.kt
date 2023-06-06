@@ -103,6 +103,29 @@ class ParseCurlTest {
 
         assertEquals(expected, request)
     }
+
+    @Test
+    fun `handles new line backslashes gracefully`() {
+        val curl = """curl 'https://blog.gypsydave5.com/' \
+            |-H 'If-Modified-Since: Wed, 10 Aug 2022 09:16:26 GMT'""".trimMargin()
+        val request = Request.parseCurl(curl)
+
+        val expected = Request(Method.GET, "https://blog.gypsydave5.com/")
+            .header("If-Modified-Since", "Wed, 10 Aug 2022 09:16:26 GMT")
+
+        assertEquals(expected, request)
+    }
+
+    @Test
+    fun `can do a post`() {
+        val curl = exampleCurlFromChrome
+        val request = Request.parseCurl(curl)
+
+        val expected = Request(Method.GET, "https://html.duckduckgo.com/html/")
+            .header("If-Modified-Since", "Wed, 10 Aug 2022 09:16:26 GMT")
+
+        assertEquals(expected, request)
+    }
 }
 
 private fun Request.Companion.parseCurl(curl: String): Request {
@@ -170,3 +193,23 @@ private val exampleCurlFromFirefox = """curl 'https://blog.gypsydave5.com/'
     |-H 'If-Modified-Since: Wed, 10 Aug 2022 09:16:26 GMT' 
     |-H 'If-None-Match: "7d51b9981a61c7f2fe01949a0dd5c20b"'"""
     .trimMargin()
+
+private val exampleCurlFromChrome = """curl 'https://html.duckduckgo.com/html/' \
+        |-H 'authority: html.duckduckgo.com' \
+        |-H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' \
+        |-H 'accept-language: en-GB,en-US;q=0.9,en;q=0.8' \
+        |-H 'cache-control: max-age=0' \
+        |-H 'content-type: application/x-www-form-urlencoded' \
+        |-H 'origin: https://html.duckduckgo.com' \
+        |-H 'referer: https://html.duckduckgo.com/' \
+        |-H 'sec-ch-ua: "Google Chrome";v="113", "Chromium";v="113", "Not-A.Brand";v="24"' \
+        |-H 'sec-ch-ua-mobile: ?0' \
+        |-H 'sec-ch-ua-platform: "macOS"' \
+        |-H 'sec-fetch-dest: document' \
+        |-H 'sec-fetch-mode: navigate' \
+        |-H 'sec-fetch-site: same-origin' \
+        |-H 'sec-fetch-user: ?1' \
+        |-H 'upgrade-insecure-requests: 1' \
+        |-H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36' \
+        |--data-raw 'q=http4k&b=' \
+        |--compressed""".trimMargin()
