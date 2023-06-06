@@ -85,21 +85,14 @@ private fun Request.Companion.parseCurl(curl: String): Request {
     val input = CharStreams.fromString(curl)
     val lexer = CurlLexer(input)
     val tokens = CommonTokenStream(lexer)
-    println(CurlLexer(CharStreams.fromString(curl)).allTokens.map {
-        it.text + " : " + CurlLexer.VOCABULARY.getSymbolicName(
-            it.type
-        )
-    })
     val parser = CurlParser(tokens)
 
     val tree = parser.parse()
 
-    println(tree.expression().url().text)
     val listener = CurlListener()
     ParseTreeWalker.DEFAULT.walk(listener, tree)
 
-    val request = listener.buildRequest()
-    return request
+    return listener.buildRequest()
 }
 
 
@@ -130,14 +123,13 @@ class CurlListener : CurlBaseListener() {
             }
 
             "d", "data" -> data = optionValue
-            // Handle other options
         }
     }
 
     fun buildRequest(): Request {
         var request = Request(method ?: Method.GET, url ?: "")
             .headers(headers)
-        
+
         data?.let { body ->
             request = request.body(body)
         }
