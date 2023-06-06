@@ -6,9 +6,9 @@ expression: 'curl' (urlOptions? url | url urlOptions?) ;
 
 urlOptions: option+;
 
-option: optionName optionValue;
+option: optionName optionValue?;
 
-optionName: '-X' | '-H' | '-d' | '-u' | '-L' | '-G' | '-A' | '-e' | '--request' | '--header' | '--data' | '--user' | '--location' | '--get' | '--user-agent' | '--referer';
+optionName: '-X' | '-H' | '-d' | '-u' | '-L' | '-G' | '-A' | '-e' | '--request' | '--header' | '--data' | '--data-raw' | '--user' | '--location' | '--get' | '--user-agent' | '--referer' | '--compressed';
 
 optionValue: STRING | DQUOTED_STRING | SQUOTED_STRING;
 

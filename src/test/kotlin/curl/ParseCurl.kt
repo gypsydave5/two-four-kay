@@ -122,7 +122,29 @@ class ParseCurlTest {
         val request = Request.parseCurl(curl)
 
         val expected = Request(Method.GET, "https://html.duckduckgo.com/html/")
-            .header("If-Modified-Since", "Wed, 10 Aug 2022 09:16:26 GMT")
+            .header("authority", "html.duckduckgo.com")
+            .header(
+                "accept",
+                "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            )
+            .header("accept-language", "en-GB,en-US;q=0.9,en;q=0.8")
+            .header("cache-control", "max-age=0")
+            .header("content-type", "application/x-www-form-urlencoded")
+            .header("origin", "https://html.duckduckgo.com")
+            .header("referer", "https://html.duckduckgo.com/")
+            .header("sec-ch-ua", """"Google Chrome";v="113", "Chromium";v="113", "Not-A.Brand";v="24"""")
+            .header("sec-ch-ua-mobile", "?0")
+            .header("sec-ch-ua-platform", """"macOS"""")
+            .header("sec-fetch-dest", "document")
+            .header("sec-fetch-mode", "navigate")
+            .header("sec-fetch-site", "same-origin")
+            .header("sec-fetch-user", "?1")
+            .header("upgrade-insecure-requests", "1")
+            .header(
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+            )
+            .body("q=http4k&b=")
 
         assertEquals(expected, request)
     }
@@ -131,6 +153,9 @@ class ParseCurlTest {
 private fun Request.Companion.parseCurl(curl: String): Request {
     val input = CharStreams.fromString(curl)
     val lexer = CurlLexer(input)
+
+    // println(CurlLexer(input).allTokens.map { CurlLexer.VOCABULARY.getSymbolicName(it.type) + ":" + it.text })
+
     val tokens = CommonTokenStream(lexer)
     val parser = CurlParser(tokens)
 
@@ -156,20 +181,16 @@ class CurlListener : CurlBaseListener() {
 
         request = when (optionName) {
             "-X", "--request" -> optionValue?.let { request.method(Method.valueOf(it)) }
-            "-H", "--header" -> {
-                optionValue
-                    ?.split(':', ignoreCase = false, limit = 2)
-                    ?.let { request.header(it.first().trim(), it[1].trim()) }
-            }
+            "-H", "--header" -> optionValue
+                ?.split(':', ignoreCase = false, limit = 2)
+                ?.let { request.header(it.first().trim(), it[1].trim()) }
 
-            "d", "data" -> optionValue?.let { request.body(it) }
+            "-d", "--data", "--data-raw" -> optionValue?.let { request.body(it) }
             else -> null
         } ?: request
     }
 
-    fun buildRequest(): Request {
-        return request
-    }
+    fun buildRequest(): Request = request
 }
 
 private fun String.stripQuotes(): String = when (first()) {
@@ -190,7 +211,7 @@ private val exampleCurlFromFirefox = """curl 'https://blog.gypsydave5.com/'
     |-H 'Sec-Fetch-Mode: navigate' 
     |-H 'Sec-Fetch-Site: none' 
     |-H 'Sec-Fetch-User: ?1' 
-    |-H 'If-Modified-Since: Wed, 10 Aug 2022 09:16:26 GMT' 
+    |-H 'If-Modified-Since: Wed, 10 Aug 2022 09:16:26 GMT'
     |-H 'If-None-Match: "7d51b9981a61c7f2fe01949a0dd5c20b"'"""
     .trimMargin()
 
