@@ -48,25 +48,18 @@ class ParseCurlTest {
     }
 
     @Test
-    fun `can parse the method`() {
-        val curl = "curl --request POST http://gypsydave5.com"
+    fun `can parse all the methods with both long and short flags`() {
+        val url = "http://gypsydave5"
+        fun curlCmd(flag: String, method: Method) = "curl $flag ${method.name} $url"
 
-        val request = Request.parseCurl(curl)
+        val inputs: List<Pair<String, Method>> = listOf("--request", "-X").cartesianProduct(Method.values().toList())
 
-        val expected = Request(Method.POST, "http://gypsydave5.com")
-
-        assertEquals(expected, request)
-    }
-
-    @Test
-    fun `can parse the method short flag`() {
-        val curl = "curl -X POST http://gypsydave5.com"
-
-        val request = Request.parseCurl(curl)
-
-        val expected = Request(Method.POST, "http://gypsydave5.com")
-
-        assertEquals(expected, request)
+        inputs.forEach { (flag, method) ->
+            val curl = curlCmd(flag, method)
+            val request = Request.parseCurl(curl)
+            val expected = Request(method, url)
+            assertEquals(expected, request)
+        }
     }
 
     @Test
@@ -154,8 +147,6 @@ private fun Request.Companion.parseCurl(curl: String): Request {
     val input = CharStreams.fromString(curl)
     val lexer = CurlLexer(input)
 
-    // println(CurlLexer(input).allTokens.map { CurlLexer.VOCABULARY.getSymbolicName(it.type) + ":" + it.text })
-
     val tokens = CommonTokenStream(lexer)
     val parser = CurlParser(tokens)
 
@@ -234,3 +225,15 @@ private val exampleCurlFromChrome = """curl 'https://html.duckduckgo.com/html/' 
         |-H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36' \
         |--data-raw 'q=http4k&b=' \
         |--compressed""".trimMargin()
+
+private val exampleCurlPostFromChrome = """curl 'http://google.com/' \
+                    |-X 'POST' \
+                    |-H 'Content-Type: application/x-www-form-urlencoded' \
+                    |-H 'Origin: null' \
+                    |-H 'Upgrade-Insecure-Requests: 1' \
+                    |-H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36' \
+                    |--compressed""".trimMargin()
+
+
+private fun <S, T> Iterable<S>.cartesianProduct(other: Iterable<T>) =
+    this.flatMap { thisIt -> other.map { otherIt -> thisIt to otherIt } }
