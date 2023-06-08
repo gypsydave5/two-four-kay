@@ -1,14 +1,8 @@
 package curl
 
-import CurlBaseListener
-import CurlLexer
-import CurlParser
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
-import org.antlr.v4.runtime.tree.ParseTreeWalker
+import io.github.gypsydave5.twofourkay.curl.parseCurl
 import org.http4k.core.Method
 import org.http4k.core.Request
-import org.http4k.core.Uri
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -143,52 +137,6 @@ class ParseCurlTest {
     }
 }
 
-private fun Request.Companion.parseCurl(curl: String): Request {
-    val input = CharStreams.fromString(curl)
-    val lexer = CurlLexer(input)
-
-    val tokens = CommonTokenStream(lexer)
-    val parser = CurlParser(tokens)
-
-    val tree = parser.parse()
-
-    val listener = CurlListener()
-    ParseTreeWalker.DEFAULT.walk(listener, tree)
-
-    return listener.buildRequest()
-}
-
-
-class CurlListener : CurlBaseListener() {
-    private var request: Request = Request(Method.GET, "")
-
-    override fun enterUrl(ctx: CurlParser.UrlContext) {
-        request = request.uri(Uri.of(ctx.text.stripQuotes()))
-    }
-
-    override fun enterOption(ctx: CurlParser.OptionContext) {
-        val optionName = ctx.optionName().text
-        val optionValue = ctx.optionValue()?.text?.stripQuotes()
-
-        request = when (optionName) {
-            "-X", "--request" -> optionValue?.let { request.method(Method.valueOf(it)) }
-            "-H", "--header" -> optionValue
-                ?.split(':', ignoreCase = false, limit = 2)
-                ?.let { request.header(it.first().trim(), it[1].trim()) }
-
-            "-d", "--data", "--data-raw" -> optionValue?.let { request.body(it) }
-            else -> null
-        } ?: request
-    }
-
-    fun buildRequest(): Request = request
-}
-
-private fun String.stripQuotes(): String = when (first()) {
-    '\'' -> removeSurrounding("\'")
-    '\"' -> removeSurrounding("\"")
-    else -> this
-}
 
 private val exampleCurlFromFirefox = """curl 'https://blog.gypsydave5.com/' 
     |-H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0' 
