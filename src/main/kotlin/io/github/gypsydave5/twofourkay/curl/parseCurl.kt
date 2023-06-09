@@ -21,3 +21,5 @@ fun Request.Companion.parseCurl(curl: String): Request {
 
     return listener.buildRequest()
 }
+
+fun String.parseCurl(): Request = Request.parseCurl(this)

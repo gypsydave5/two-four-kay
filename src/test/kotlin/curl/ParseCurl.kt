@@ -3,6 +3,8 @@ package curl
 import io.github.gypsydave5.twofourkay.curl.parseCurl
 import org.http4k.core.Method
 import org.http4k.core.Request
+import org.http4k.core.Uri
+import org.http4k.core.toCurl
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -135,7 +137,28 @@ class ParseCurlTest {
 
         assertEquals(expected, request)
     }
+
+    @Test
+    fun `extensive examples`() {
+        (0..20).forEach {
+            val request: Request = Request.random()
+            println(request)
+            assertEquals(request, Request.parseCurl(request.toCurl()))
+        }
+    }
 }
+
+fun Request.Companion.random(): Request = Request(Method.random(), Uri.random())
+
+private fun Uri.Companion.random(): Uri = of("http://${String.random()}.com")
+
+private fun Method.Companion.random(): Method = Method.values().random()
+
+private fun String.Companion.random(
+    size: Int = 20,
+    chars: Iterable<Char> = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+): String =
+    CharArray(size) { chars.toList().random() }.concatToString()
 
 
 private val exampleCurlFromFirefox = """curl 'https://blog.gypsydave5.com/' 

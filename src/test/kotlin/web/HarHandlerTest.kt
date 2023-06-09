@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 class HarHandlerTest {
     @Test
     fun `can convert a HAR into a kotlin file of requests and responses`() {
-        val request = Request(Method.POST, "/har").body(getResourceAsText("simplest.har"))
+        val request = Request(Method.POST, "").body(getResourceAsText("simplest.har"))
         val response = harHandler(request)
 
         assertEquals(transactions, response.bodyString())
@@ -20,7 +20,7 @@ class HarHandlerTest {
 
     @Test
     fun `tells you you're doing it wrong if you aren't POSTing a HAR`() {
-        val request = Request(Method.POST, "/har").body("not a har")
+        val request = Request(Method.POST, "").body("not a har")
         val response = harHandler(request)
 
         assertEquals(Status.BAD_REQUEST, response.status)
@@ -29,7 +29,7 @@ class HarHandlerTest {
 
     @Test
     fun `can also convert a HAR from a GET request with a query string`() {
-        val request = Request(Method.GET, "/har").query("har", getResourceAsText("simplest.har"))
+        val request = Request(Method.GET, "").query("har", getResourceAsText("simplest.har"))
 
         val response = harHandler(request)
 
@@ -39,7 +39,7 @@ class HarHandlerTest {
 
     @Test
     fun `tells you you're doing it wrong if you're not sending a HAR`() {
-        val request = Request(Method.GET, "/har").query("har", "not a har")
+        val request = Request(Method.GET, "").query("har", "not a har")
 
         val response = harHandler(request)
 
@@ -49,7 +49,7 @@ class HarHandlerTest {
 
     @Test
     fun `tells you you're doing it wrong if you've not got a har parameter`() {
-        val request = Request(Method.GET, "/har")
+        val request = Request(Method.GET, "")
 
         val response = harHandler(request)
 

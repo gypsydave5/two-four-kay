@@ -18,7 +18,6 @@ private fun routing(request: Request): Response {
     )(request)
 }
 
-
 private val rootHandler = { request: Request ->
     Response(Status.OK).body(getResourceAsText("/index.html"))
 }
