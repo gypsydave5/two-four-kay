@@ -37,6 +37,9 @@ dependencies {
 tasks.named("compileKotlin")
     .configure { dependsOn("generateGrammarSource") }
 
+tasks.named("compileTestKotlin")
+    .configure { dependsOn("generateTestGrammarSource") }
+
 tasks.test {
     useJUnitPlatform()
 }
