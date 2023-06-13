@@ -1,8 +1,8 @@
 package har
 
 import dev.forkhandles.result4k.orThrow
-import io.github.gypsydave5.twofourkay.har.HAR
-import io.github.gypsydave5.twofourkay.har.parseHar
+import io.github.gypsydave5.twofourkay.parse.har.HAR
+import io.github.gypsydave5.twofourkay.parse.har.parseHar
 import org.http4k.core.*
 import org.http4k.core.HttpMessage.Companion.HTTP_1_1
 import org.http4k.core.body.formAsMap
@@ -12,7 +12,7 @@ import org.http4k.urlDecoded
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import io.github.gypsydave5.twofourkay.har.Request as HarRequest
+import io.github.gypsydave5.twofourkay.parse.har.Request as HarRequest
 
 class ParseHarRequestTest {
     private val request: HarRequest = getFirstRequestFrom("motherfuckingwebsite_firefox_http_1_1.har")

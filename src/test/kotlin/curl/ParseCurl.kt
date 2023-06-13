@@ -1,6 +1,6 @@
 package curl
 
-import io.github.gypsydave5.twofourkay.curl.parseCurl
+import io.github.gypsydave5.twofourkay.parse.curl.parseCurl
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Uri

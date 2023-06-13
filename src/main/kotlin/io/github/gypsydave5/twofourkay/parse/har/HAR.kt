@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalSerializationApi::class)
 
-package io.github.gypsydave5.twofourkay.har
+package io.github.gypsydave5.twofourkay.parse.har
 
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.mapFailure

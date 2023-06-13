@@ -14,6 +14,7 @@ class App : HttpHandler {
 private fun routing(request: Request): Response {
     return routes(
         "/har" bind harHandler,
+        "/" bind Method.POST to parseHandler,
         "/" bind Method.GET to rootHandler
     )(request)
 }

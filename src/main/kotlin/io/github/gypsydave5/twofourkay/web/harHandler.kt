@@ -5,9 +5,9 @@ import dev.forkhandles.result4k.flatMap
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.recover
 import io.github.gypsydave5.twofourkay.generateKotlin.generateKotlin
-import io.github.gypsydave5.twofourkay.har.HAR
-import io.github.gypsydave5.twofourkay.har.parseHar
-import io.github.gypsydave5.twofourkay.har.toHttpTransactions
+import io.github.gypsydave5.twofourkay.parse.har.HAR
+import io.github.gypsydave5.twofourkay.parse.har.parseHar
+import io.github.gypsydave5.twofourkay.parse.har.toHttpTransactions
 import org.http4k.core.HttpTransaction
 import org.http4k.core.Method
 import org.http4k.core.Response

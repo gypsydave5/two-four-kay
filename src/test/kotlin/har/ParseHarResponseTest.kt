@@ -1,6 +1,6 @@
 package har
 
-import io.github.gypsydave5.twofourkay.har.parseHar
+import io.github.gypsydave5.twofourkay.parse.har.parseHar
 import org.http4k.core.HttpMessage.Companion.HTTP_1_1
 import org.http4k.core.Response
 import org.http4k.core.Status
@@ -10,7 +10,7 @@ import org.http4k.core.cookie.cookies
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import io.github.gypsydave5.twofourkay.har.Response as HarResponse
+import io.github.gypsydave5.twofourkay.parse.har.Response as HarResponse
 
 class ParseHarResponseTest {
     private val res =

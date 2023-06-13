@@ -1,4 +1,4 @@
-package io.github.gypsydave5.twofourkay.har
+package io.github.gypsydave5.twofourkay.parse.har
 
 import org.http4k.core.HttpTransaction
 import kotlin.time.DurationUnit

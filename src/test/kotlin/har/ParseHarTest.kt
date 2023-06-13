@@ -1,8 +1,8 @@
 package har
 
 import dev.forkhandles.result4k.failureOrNull
-import io.github.gypsydave5.twofourkay.har.ParseHarError
-import io.github.gypsydave5.twofourkay.har.parseHar
+import io.github.gypsydave5.twofourkay.parse.har.ParseHarError
+import io.github.gypsydave5.twofourkay.parse.har.parseHar
 import kotlin.test.Test
 
 import kotlin.test.assertIs

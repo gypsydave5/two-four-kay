@@ -25,17 +25,38 @@ class AppTest {
     }
 
     @Test
-    fun `you can use the index page to submit a form`() {
+    fun `you can use the index page to submit a form with a HAR in it`() {
         val app = App()
 
         val driver = Http4kWebDriver(app)
 
         driver.navigate().to("/")
-        driver.findElement(By.cssSelector("textarea"))?.sendKeys(getResourceAsText("simplest.har"))
-        driver.findElement(By.cssSelector("form"))?.submit()
+        driver.findElement(By.cssSelector("textarea"))!!.sendKeys(getResourceAsText("simplest.har"))
+        driver.findElement(By.cssSelector("form"))!!.submit()
         assertEquals(Status.OK, driver.status)
 
         assertEquals(transactions, driver.pageSource)
+    }
+
+    @Test
+    fun `you can use the index page to submit a form with a curl in it`() {
+        val app = App()
+
+        val driver = Http4kWebDriver(app)
+
+        driver.navigate().to("/")
+        driver.findElement(By.cssSelector("textarea"))!!.sendKeys("curl -X POST https://http4k.org")
+        driver.findElement(By.cssSelector("form"))!!.submit()
+
+        assertEquals(Status.OK, driver.status)
+        assertEquals(
+            """import org.http4k.core.Method
+              |import org.http4k.core.Request
+
+              |public val request: Request = Request(Method.POST, "https://http4k.org")
+              |""".trimMargin(),
+            driver.pageSource
+        )
     }
 }
 

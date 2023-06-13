@@ -1,4 +1,4 @@
-package io.github.gypsydave5.twofourkay.curl
+package io.github.gypsydave5.twofourkay.parse.curl
 
 import CurlBaseListener
 import CurlParser

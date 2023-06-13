@@ -1,6 +1,6 @@
 package har
 
-import io.github.gypsydave5.twofourkay.har.toHttpTransactions
+import io.github.gypsydave5.twofourkay.parse.har.toHttpTransactions
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
