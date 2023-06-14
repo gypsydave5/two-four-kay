@@ -1,5 +1,7 @@
 package curl
 
+import dev.forkhandles.result4k.Failure
+import dev.forkhandles.result4k.orThrow
 import io.github.gypsydave5.twofourkay.parse.curl.parseCurl
 import org.http4k.core.Method
 import org.http4k.core.Request
@@ -7,6 +9,7 @@ import org.http4k.core.Uri
 import org.http4k.core.toCurl
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ParseCurlTest {
 
@@ -14,7 +17,7 @@ class ParseCurlTest {
     fun `can parse a basic cURL command`() {
         val curl = "curl http://gypsydave5.com"
 
-        val request = Request.parseCurl(curl)
+        val request = Request.parseCurl(curl).orThrow()
 
         val expected = Request(Method.GET, "http://gypsydave5.com")
 
@@ -25,7 +28,7 @@ class ParseCurlTest {
     fun `does the right thing with double quotes`() {
         val curl = "curl \"http://gypsydave5.com\""
 
-        val request = Request.parseCurl(curl)
+        val request = Request.parseCurl(curl).orThrow()
 
         val expected = Request(Method.GET, "http://gypsydave5.com")
 
@@ -36,7 +39,7 @@ class ParseCurlTest {
     fun `does the right thing with single quotes`() {
         val curl = "curl 'http://gypsydave5.com'"
 
-        val request = Request.parseCurl(curl)
+        val request = Request.parseCurl(curl).orThrow()
 
         val expected = Request(Method.GET, "http://gypsydave5.com")
 
@@ -52,7 +55,7 @@ class ParseCurlTest {
 
         inputs.forEach { (flag, method) ->
             val curl = curlCmd(flag, method)
-            val request = Request.parseCurl(curl)
+            val request = Request.parseCurl(curl).orThrow()
             val expected = Request(method, url)
             assertEquals(expected, request)
         }
@@ -62,7 +65,7 @@ class ParseCurlTest {
     fun `can parse the headers short flag`() {
         val curl = "curl -H 'Connection: keep-alive' http://gypsydave5.com"
 
-        val request = Request.parseCurl(curl)
+        val request = Request.parseCurl(curl).orThrow()
 
         val expected = Request(Method.GET, "http://gypsydave5.com")
             .header("Connection", "keep-alive")
@@ -74,7 +77,7 @@ class ParseCurlTest {
     fun `is cool with the options appearing after the url`() {
         val curl = "curl http://gypsydave5.com -H 'Connection: keep-alive'"
 
-        val request = Request.parseCurl(curl)
+        val request = Request.parseCurl(curl).orThrow()
 
         val expected = Request(Method.GET, "http://gypsydave5.com")
             .header("Connection", "keep-alive")
@@ -85,7 +88,7 @@ class ParseCurlTest {
     @Test
     fun `handles header values with colons in gracefully`() {
         val curl = "curl 'https://blog.gypsydave5.com/' -H 'If-Modified-Since: Wed, 10 Aug 2022 09:16:26 GMT'"
-        val request = Request.parseCurl(curl)
+        val request = Request.parseCurl(curl).orThrow()
 
         val expected = Request(Method.GET, "https://blog.gypsydave5.com/")
             .header("If-Modified-Since", "Wed, 10 Aug 2022 09:16:26 GMT")
@@ -97,7 +100,7 @@ class ParseCurlTest {
     fun `handles new line backslashes gracefully`() {
         val curl = """curl 'https://blog.gypsydave5.com/' \
             |-H 'If-Modified-Since: Wed, 10 Aug 2022 09:16:26 GMT'""".trimMargin()
-        val request = Request.parseCurl(curl)
+        val request = Request.parseCurl(curl).orThrow()
 
         val expected = Request(Method.GET, "https://blog.gypsydave5.com/")
             .header("If-Modified-Since", "Wed, 10 Aug 2022 09:16:26 GMT")
@@ -108,7 +111,7 @@ class ParseCurlTest {
     @Test
     fun `can do a post`() {
         val curl = exampleCurlFromChrome
-        val request = Request.parseCurl(curl)
+        val request = Request.parseCurl(curl).orThrow()
 
         val expected = Request(Method.GET, "https://html.duckduckgo.com/html/")
             .header("authority", "html.duckduckgo.com")
@@ -139,12 +142,18 @@ class ParseCurlTest {
     }
 
     @Test
-    fun `extensive examples`() {
+    fun `a request, when converted toCurl and then parsed back from cURL, is the identical`() {
         (0..20).forEach {
             val request: Request = Request.random()
-            println(request)
-            assertEquals(request, Request.parseCurl(request.toCurl()))
+            assertEquals(request, Request.parseCurl(request.toCurl()).orThrow())
         }
+    }
+
+    @Test
+    fun `gracefully handles bad output`() {
+        val badCommand = "this is not a curl"
+        val result = Request.parseCurl(badCommand)
+        assertTrue(result is Failure)
     }
 }
 

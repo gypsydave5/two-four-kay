@@ -1,7 +1,6 @@
 package io.github.gypsydave5.twofourkay.parse
 
 import dev.forkhandles.result4k.Result
-import dev.forkhandles.result4k.Success
 import dev.forkhandles.result4k.map
 import io.github.gypsydave5.twofourkay.generateKotlin.generateKotlin
 import io.github.gypsydave5.twofourkay.parse.curl.parseCurl
@@ -13,10 +12,8 @@ import org.http4k.core.Request
 
 fun parse(input: String): Result<String, Error> =
     if (input.startsWith("curl")) {
-        Success(
-            Request.parseCurl(input)
-                .generateKotlin()
-        )
+        Request.parseCurl(input)
+            .map { it.generateKotlin() }
     } else {
         input.parseHar()
             .map(HAR::toHttpTransactions)
