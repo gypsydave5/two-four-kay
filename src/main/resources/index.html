@@ -3,20 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Two Four Kay</title>
-    <style>
-        textarea {
-            width: 300px;
-            height: 700px;
-        }
-    </style>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <link href="output.css" rel="stylesheet">
 </head>
 <body>
-<h1>Two Four Kay </h1>
+<h1 class="text-3xl font-bold underline">Two Four Kay </h1>
 
-<form action="/" method="post">
-    <label for="content">HAR or cURL input</label>
-    <textarea id="content" name="content" placeholder="HAR JSON or a cURL command"></textarea>
-    <input type="submit">
-</form>
+<div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
+    <form action="/" class="h-12 w-12" hx-post="/" hx-swap="innerHTML" hx-target="#output" method="post">
+        <label for="content">
+            <span>HAR or cURL</span>
+            <textarea
+                    class="border-slate-300"
+                    id="content"
+                    name="content"
+                    placeholder="HAR JSON or a cURL command">
+            </textarea>
+        </label>
+        <input type="submit">
+    </form>
+
+
+    <label for="output">Result</label>
+    <textarea id="output"></textarea>
+</div>
 </body>
 </html>
