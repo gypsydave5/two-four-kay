@@ -1,0 +1,15 @@
+image: alpine/latest
+secrets:
+  - f9552c6b-59ed-4c20-98b0-ea45c7cfa5c0
+sources:
+  - git@git.sr.ht:~dew/two-four-kay
+tasks:
+  - deploy: |
+      curl -L https://fly.io/install.sh | sh
+      export FLYCTL_INSTALL="/home/build/.fly"
+      export PATH="$FLYCTL_INSTALL/bin:$PATH"
+
+      cd two-four-kay
+      set +x
+      source ~/.fly.io.secrets
+      flyctl deploy
