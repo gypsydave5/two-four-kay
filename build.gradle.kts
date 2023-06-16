@@ -31,6 +31,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation(kotlin("reflect"))
 
+    implementation("com.natpryce:konfig:1.6.10.0")
+
     antlr("org.antlr:antlr4:4.9.3")
 }
 

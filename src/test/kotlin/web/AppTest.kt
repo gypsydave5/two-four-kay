@@ -1,5 +1,6 @@
 package web
 
+import Configuration
 import har.getResourceAsText
 import io.github.gypsydave5.twofourkay.web.App
 import org.http4k.core.Method
@@ -17,7 +18,7 @@ class AppTest {
 
     @Test
     fun `has some sort of index page`() {
-        val app = App()
+        val app = App(Configuration())
         val request = Request(Method.GET, "/")
         val response = app(request)
 
@@ -26,7 +27,7 @@ class AppTest {
 
     @Test
     fun `you can use the index page to submit a form with a HAR in it`() {
-        val app = App()
+        val app = App(Configuration())
 
         val driver = Http4kWebDriver(app)
 
@@ -40,7 +41,7 @@ class AppTest {
 
     @Test
     fun `you can use the index page to submit a form with a curl in it`() {
-        val app = App()
+        val app = App(Configuration())
 
         val driver = Http4kWebDriver(app)
 

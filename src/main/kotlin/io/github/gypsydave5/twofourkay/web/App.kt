@@ -1,32 +1,27 @@
 package io.github.gypsydave5.twofourkay.web
 
-import org.http4k.core.*
-import org.http4k.routing.ResourceLoader
+import Configuration
+import org.http4k.core.HttpHandler
+import org.http4k.core.Method
+import org.http4k.core.Request
+import org.http4k.core.Response
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.routing.static
-import java.io.FileNotFoundException
 
-class App : HttpHandler {
+class App(config: Configuration) : HttpHandler {
     override fun invoke(request: Request): Response {
         return routing(request)
     }
-}
 
-private fun routing(request: Request): Response {
-    return routes(
+    private val staticHandler = static(config.publicResources)
+
+    private val routing = routes(
         "/har" bind harHandler,
         "/" bind Method.POST to parseHandler,
-        "/" bind Method.GET to bob
-    )(request)
+        "/" bind Method.GET to staticHandler
+    )
 }
 
-private val bob = static(ResourceLoader.Directory("src/main/resources"))
 
-private val rootHandler = { request: Request ->
-    Response(Status.OK).body(getResourceAsText("/index.html"))
-}
-
-private fun getResourceAsText(path: String): String =
-    object {}.javaClass.getResource(path)?.readText() ?: throw FileNotFoundException(path)
 
