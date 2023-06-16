@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Two Four Kay</title>
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.8"></script>
     <link href="output.css" rel="stylesheet">
 </head>
 <body>
@@ -53,6 +54,23 @@
                     border-blue-500
                     rounded resize-none p-1 h-48"
                 id="output"></textarea>
+        <button _="on click
+                        set text to #output.value
+                        js(text)
+                            if ('clipboard' in window.navigator) {
+                                return navigator.clipboard.writeText(text)
+                                    .then(() => 'Copied');
+                            }
+                        end
+                        put it into my.innerHTML"
+                class="bg-blue-500
+                   hover:bg-blue-700
+                   text-white
+                   font-bold
+                   py-2
+                   px-4
+                   rounded">Copy
+        </button>
     </div>
 </div>
 </body>
