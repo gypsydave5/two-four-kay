@@ -3,6 +3,8 @@ plugins {
     kotlin("plugin.serialization") version "1.8.21"
     antlr
     application
+
+    id("de.undercouch.download") version "5.4.0"
 }
 
 group = "org.example"
@@ -48,6 +50,28 @@ tasks.test {
 
 kotlin {
     jvmToolchain(11)
+}
+
+task<Exec>("tailwindWatch") {
+    commandLine(
+        "./tailwindcss",
+        "-i",
+        "./src/main/css/input.css",
+        "-o",
+        "./src/main/resources/public/output.css",
+        "--watch=always",
+    )
+}
+
+task<Exec>("tailwindBuild") {
+    commandLine(
+        "./tailwindcss",
+        "-i",
+        "./src/main/css/input.css",
+        "-o",
+        "./src/main/resources/public/output.css",
+        "--minify",
+    )
 }
 
 application {
