@@ -6,10 +6,9 @@ import io.github.gypsydave5.twofourkay.web.App
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
-
+import org.http4k.routing.ResourceLoader
 import org.http4k.webdriver.Http4kWebDriver
 import org.openqa.selenium.By
-
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -18,7 +17,7 @@ class AppTest {
 
     @Test
     fun `has some sort of index page`() {
-        val app = App(Configuration())
+        val app = App(TestConfig)
         val request = Request(Method.GET, "/")
         val response = app(request)
 
@@ -27,7 +26,7 @@ class AppTest {
 
     @Test
     fun `you can use the index page to submit a form with a HAR in it`() {
-        val app = App(Configuration())
+        val app = App(TestConfig)
 
         val driver = Http4kWebDriver(app)
 
@@ -41,7 +40,7 @@ class AppTest {
 
     @Test
     fun `you can use the index page to submit a form with a curl command in it`() {
-        val app = App(Configuration())
+        val app = App(TestConfig)
 
         val driver = Http4kWebDriver(app)
 
@@ -59,4 +58,13 @@ class AppTest {
         )
     }
 }
+
+object TestConfig : Configuration {
+    override val server_port: Int = 8080
+    override val env: String = "dev"
+    override val config: com.natpryce.konfig.Configuration
+        get() = TODO("Not yet implemented")
+    override val publicResources: ResourceLoader = ResourceLoader.Directory("src/main/resources/public")
+}
+
 

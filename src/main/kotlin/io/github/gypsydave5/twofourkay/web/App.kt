@@ -9,15 +9,15 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.routing.static
 import org.http4k.template.HandlebarsTemplates
+import org.http4k.template.TemplateRenderer
 
 class App(config: Configuration) : HttpHandler {
+    private val renderer = newRenderer(config.env)
+    private val staticHandler = static(config.publicResources)
+
     override fun invoke(request: Request): Response {
         return routing(request)
     }
-
-    val renderer = HandlebarsTemplates().HotReload("src/main/resources/templates")
-
-    private val staticHandler = static(config.publicResources)
 
 
     private val routing = routes(
@@ -25,8 +25,16 @@ class App(config: Configuration) : HttpHandler {
         "/" bind Method.POST to ParseHandler(renderer),
         "/" bind Method.GET to staticHandler
     )
-//        .withFilter(htmxFilter)
 }
+
+private fun newRenderer(env: String): TemplateRenderer {
+    if (env == "dev") {
+        return HandlebarsTemplates().HotReload("src/main/resources/templates")
+    } else {
+        return HandlebarsTemplates().CachingClasspath()
+    }
+}
+
 
 
 

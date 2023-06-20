@@ -3,7 +3,7 @@ import org.http4k.server.Undertow
 import org.http4k.server.asServer
 
 fun main() {
-    val config = Configuration()
+    val config = EnvConfiguration()
 
     val app = App(config)
 
