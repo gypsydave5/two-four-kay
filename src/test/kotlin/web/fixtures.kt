@@ -26,6 +26,4 @@ val transactions = """
             |public val secondResponse: Response = Response(Status.OK)
             |    	.header("content-type", "text/plain")
             |    	.header("content-length", "13")
-            |    	.body("goodbye world")
-            |
-        """.trimMargin()
+            |    	.body("goodbye world")""".trimMargin()

@@ -3,45 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <title>Two Four Kay</title>
-    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="htmx.js"></script>
+    <script src="response-targets.js"></script>
+    <script src="scripts.js"></script>
     <script src="https://unpkg.com/hyperscript.org@0.9.8"></script>
     <link href="output.css" rel="stylesheet">
 </head>
-<body>
+<body hx-ext="response-targets">
 <header class="bg-blue-500 p-4">
     <h1 class="text-3xl font-bold underline text-white">Two Four Kay</h1>
 </header>
+
+<div class="bg-red-300 transition-all h-0 content" id="errors">Errors</div>
 
 <div class="relative flex min-h-screen flex-col sm:flex-row
             overflow-hidden bg-gray-50 py-4 sm:py-8">
 
     <div class="px-2 sm:px-10 py-5 w-full h-full">
         <form action="/"
-              class="flex flex-col" hx-post="/" hx-swap="innerHTML" hx-target="#output" method="post">
+              class="flex flex-col" hx-post="/"
+              hx-select=".content"
+              hx-swap="outerHTML"
+              hx-target="#output"
+              hx-target-4*="#errors"
+              hx-target-5*="#errors"
+              method="post">
             <label for="content"><span>HAR or cURL to convert</span></label>
-            <textarea
-                    class="my-5
-                    font-mono
-                    border
-                    border-solid
-                    border-2
-                    border-blue-500
-                    rounded resize-none p-1 h-48"
-                    id="content"
-                    name="content"
-                    placeholder="e.g curl -X GET http://http4k.org"></textarea>
+            <textarea class="my-5
+                            font-mono
+                            border
+                            border-solid
+                            border-2
+                            border-blue-500
+                            rounded resize-none p-1 h-64"
+                      id="content"
+                      name="content"
+                      placeholder="e.g curl -X GET http://http4k.org"></textarea>
             <input class="bg-blue-500
-                   hover:bg-blue-700
-                   text-white
-                   font-bold
-                   py-2
-                   px-4
-                   rounded"
+                          hover:bg-blue-700
+                          text-white
+                          font-bold
+                          py-2
+                          px-4
+                          rounded"
                    type="submit"
                    value="Convert">
         </form>
     </div>
-
 
     <div class="px-2 sm:px-10 py-5 flex flex-col w-full h-full">
         <label for="output">Result</label>
@@ -52,23 +60,22 @@
                     border-solid
                     border-2
                     border-blue-500
-                    rounded resize-none p-1 h-48"
+                    rounded resize-none p-1 h-64"
                 id="output"></textarea>
-        <button _="on click
-                        set text to #output.value
-                        js(text)
-                            if ('clipboard' in window.navigator) {
-                                return navigator.clipboard.writeText(text)
-                                    .then(() => 'Copied');
-                            }
-                        end
-                        put it into my.innerHTML"
+        <button _="on click copyToClipboard(#output.value)
+        then put the 'Copied' into my.innerHTML
+        set x to my *background-color
+        log x
+        wait 0.5s then transition my *color to 'rgba(0,0,0,0)' over 0.5s
+        put 'Copy' into my.innerHTML
+        transition my *color to 'white' over 0.5s"
                 class="bg-blue-500
                    hover:bg-blue-700
                    text-white
                    font-bold
                    py-2
                    px-4
+                   transition-all
                    rounded">Copy
         </button>
     </div>

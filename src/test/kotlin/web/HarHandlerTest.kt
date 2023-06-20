@@ -15,7 +15,7 @@ class HarHandlerTest {
         val request = Request(Method.POST, "").body(getResourceAsText("simplest.har"))
         val response = harHandler(request)
 
-        assertEquals(transactions, response.bodyString())
+        assertEquals(transactions, response.bodyString().trim())
     }
 
     @Test
@@ -34,7 +34,7 @@ class HarHandlerTest {
         val response = harHandler(request)
 
         assertEquals(Status.OK, response.status)
-        assertEquals(transactions, response.bodyString())
+        assertEquals(transactions, response.bodyString().trim())
     }
 
     @Test

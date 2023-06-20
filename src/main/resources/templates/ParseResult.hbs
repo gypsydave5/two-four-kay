@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Two Four Kay</title>
+    <script src="htmx.js"></script>
+    <script src="response-targets.js"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.8"></script>
+    <link href="output.css" rel="stylesheet">
+</head>
+<body hx-ext="response-targets">
+<header class="bg-blue-500 p-4">
+    <h1 class="text-3xl font-bold underline text-white">Two Four Kay</h1>
+</header>
+
+<div class="relative flex min-h-screen flex-col sm:flex-row
+            overflow-hidden bg-gray-50 py-4 sm:py-8">
+    <div class="px-2 sm:px-10 py-5 flex flex-col w-full h-full">
+        <label for="output">Result</label>
+        <textarea
+                class="my-5
+                    font-mono
+                    border
+                    border-solid
+                    border-2
+                    border-blue-500
+                    rounded resize-none p-1 h-64 content"
+                id="output">{{ kotlinString }}</textarea>
+        <button _="on click
+                        set text to #output.value
+                        js(text)
+                            if ('clipboard' in window.navigator) {
+                                return navigator.clipboard.writeText(text)
+                                    .then(() => 'Copied')
+                                    .catch(console.error);
+                            }
+                        end
+                        put it into my.innerHTML"
+                class="bg-blue-500
+                   hover:bg-blue-700
+                   text-white
+                   font-bold
+                   py-2
+                   px-4
+                   rounded">Copy
+        </button>
+    </div>
+</div>
+</body>
+</html>

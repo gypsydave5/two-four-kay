@@ -27,6 +27,7 @@ dependencies {
     implementation("org.http4k:http4k-server-undertow")
     implementation("org.http4k:http4k-client-apache")
     implementation("org.http4k:http4k-testing-webdriver")
+    implementation("org.http4k:http4k-template-handlebars")
 
     implementation("com.squareup:kotlinpoet:1.13.2")
     implementation("dev.forkhandles:result4k:2.5.0.0")

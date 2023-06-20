@@ -36,11 +36,11 @@ class AppTest {
         driver.findElement(By.cssSelector("form"))!!.submit()
         assertEquals(Status.OK, driver.status)
 
-        assertEquals(transactions, driver.pageSource)
+        assertEquals(transactions, driver.findElement(By.cssSelector("#result"))!!.text)
     }
 
     @Test
-    fun `you can use the index page to submit a form with a curl in it`() {
+    fun `you can use the index page to submit a form with a curl command in it`() {
         val app = App(Configuration())
 
         val driver = Http4kWebDriver(app)
@@ -54,9 +54,8 @@ class AppTest {
             """import org.http4k.core.Method
               |import org.http4k.core.Request
 
-              |public val request: Request = Request(Method.POST, "https://http4k.org")
-              |""".trimMargin(),
-            driver.pageSource
+              |public val request: Request = Request(Method.POST, "https://http4k.org")""".trimMargin(),
+            driver.findElement(By.cssSelector("#result"))!!.text
         )
     }
 }
