@@ -36,7 +36,7 @@ class AppTest {
         driver.findElement(By.cssSelector("form"))!!.submit()
         assertEquals(Status.OK, driver.status)
 
-        assertEquals(transactions, driver.findElement(By.cssSelector("#result"))!!.text)
+        assertEquals(transactions, driver.findElement(By.cssSelector("#output"))!!.text)
     }
 
     @Test
@@ -55,7 +55,7 @@ class AppTest {
               |import org.http4k.core.Request
 
               |public val request: Request = Request(Method.POST, "https://http4k.org")""".trimMargin(),
-            driver.findElement(By.cssSelector("#result"))!!.text
+            driver.findElement(By.cssSelector("#output"))!!.text
         )
     }
 }
