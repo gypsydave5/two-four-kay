@@ -6,7 +6,6 @@ import io.github.gypsydave5.twofourkay.web.App
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
-import org.http4k.routing.ResourceLoader
 import org.http4k.webdriver.Http4kWebDriver
 import org.openqa.selenium.By
 import kotlin.test.Test
@@ -62,9 +61,6 @@ class AppTest {
 object TestConfig : Configuration {
     override val server_port: Int = 8080
     override val env: String = "dev"
-    override val config: com.natpryce.konfig.Configuration
-        get() = TODO("Not yet implemented")
-    override val publicResources: ResourceLoader = ResourceLoader.Directory("src/main/resources/public")
 }
 
 
