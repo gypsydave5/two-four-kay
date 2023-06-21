@@ -60,7 +60,7 @@ class AppTest {
 
 object TestConfig : Configuration {
     override val server_port: Int = 8080
-    override val env: String = "dev"
+    override val env: String = "test"
 }
 
 

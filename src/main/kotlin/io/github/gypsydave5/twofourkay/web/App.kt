@@ -31,7 +31,7 @@ class App(config: Configuration) : HttpHandler {
 class Renderer(config: Configuration) : TemplateRenderer by if (config.env == "dev") {
     HandlebarsTemplates().HotReload("src/main/resources/templates")
 } else {
-    HandlebarsTemplates().CachingClasspath("public")
+    HandlebarsTemplates().CachingClasspath("templates")
 }
 
 class PublicHttpHandler(config: Configuration) : HttpHandler by if (config.env == "dev") {
