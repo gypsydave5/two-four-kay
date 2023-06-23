@@ -8,14 +8,11 @@ import io.github.gypsydave5.twofourkay.generateKotlin.generateKotlin
 import io.github.gypsydave5.twofourkay.parse.har.HAR
 import io.github.gypsydave5.twofourkay.parse.har.parseHar
 import io.github.gypsydave5.twofourkay.parse.har.toHttpTransactions
-import org.http4k.core.HttpTransaction
-import org.http4k.core.Method
-import org.http4k.core.Response
-import org.http4k.core.Status
+import org.http4k.core.*
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 
-val harHandler = routes(
+class HarHandler() : HttpHandler by routes(
     Method.POST bind { request ->
         request.bodyString().parseHar()
             .map(HAR::toHttpTransactions)

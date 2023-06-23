@@ -1,7 +1,7 @@
 package web
 
 import har.getResourceAsText
-import io.github.gypsydave5.twofourkay.web.harHandler
+import io.github.gypsydave5.twofourkay.web.HarHandler
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
@@ -13,7 +13,7 @@ class HarHandlerTest {
     @Test
     fun `can convert a HAR into a kotlin file of requests and responses`() {
         val request = Request(Method.POST, "").body(getResourceAsText("simplest.har"))
-        val response = harHandler(request)
+        val response = HarHandler()(request)
 
         assertEquals(transactions, response.bodyString().trim())
     }
@@ -21,7 +21,7 @@ class HarHandlerTest {
     @Test
     fun `tells you you're doing it wrong if you aren't POSTing a HAR`() {
         val request = Request(Method.POST, "").body("not a har")
-        val response = harHandler(request)
+        val response = HarHandler()(request)
 
         assertEquals(Status.BAD_REQUEST, response.status)
         assertContains(response.bodyString(), "Unable to parse HAR")
@@ -31,7 +31,7 @@ class HarHandlerTest {
     fun `can also convert a HAR from a GET request with a query string`() {
         val request = Request(Method.GET, "").query("har", getResourceAsText("simplest.har"))
 
-        val response = harHandler(request)
+        val response = HarHandler()(request)
 
         assertEquals(Status.OK, response.status)
         assertEquals(transactions, response.bodyString().trim())
@@ -41,7 +41,7 @@ class HarHandlerTest {
     fun `tells you you're doing it wrong if you're not sending a HAR`() {
         val request = Request(Method.GET, "").query("har", "not a har")
 
-        val response = harHandler(request)
+        val response = HarHandler()(request)
 
         assertEquals(Status.BAD_REQUEST, response.status)
         assertContains(response.bodyString(), "Unable to parse HAR")
@@ -51,7 +51,7 @@ class HarHandlerTest {
     fun `tells you you're doing it wrong if you've not got a har parameter`() {
         val request = Request(Method.GET, "")
 
-        val response = harHandler(request)
+        val response = HarHandler()(request)
 
         assertEquals(Status.BAD_REQUEST, response.status)
         assertContains(response.bodyString(), "Missing har parameter in query string")

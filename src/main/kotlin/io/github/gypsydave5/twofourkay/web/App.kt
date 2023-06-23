@@ -13,31 +13,30 @@ import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.TemplateRenderer
 
 class App(config: Configuration) : HttpHandler {
-    private val renderer = Renderer(config)
-    private val staticHandler = PublicHttpHandler(config)
+    private val renderer = handlebarsTemplateRenderer(config)
+    private val staticHandler = publicHttpHandler(config)
 
     override fun invoke(request: Request): Response {
         return routing(request)
     }
 
-
     private val routing = routes(
-        "/har" bind harHandler,
+        "/har" bind HarHandler(),
         "/" bind Method.POST to ParseHandler(renderer),
         "/" bind Method.GET to staticHandler
     )
 }
 
-class Renderer(config: Configuration) : TemplateRenderer by if (config.env == "dev") {
+fun handlebarsTemplateRenderer(config: Configuration): TemplateRenderer = if (config.env == "dev") {
     HandlebarsTemplates().HotReload("src/main/resources/templates")
 } else {
     HandlebarsTemplates().CachingClasspath("templates")
 }
 
-class PublicHttpHandler(config: Configuration) : HttpHandler by if (config.env == "dev") {
+fun publicHttpHandler(config: Configuration): HttpHandler = if (config.env == "dev") {
     static(ResourceLoader.Directory("src/main/resources/public"))
 } else {
-    static(ResourceLoader.Classpath("/public"))
+    static(ResourceLoader.Classpath("public"))
 }
 
 
