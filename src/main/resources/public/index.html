@@ -36,7 +36,10 @@
                             border-solid
                             border-2
                             border-blue-500
-                            rounded resize-none p-1 h-64"
+                            rounded
+                            resize-none
+                            p-1
+                            h-64"
                       id="content"
                       name="content"
                       placeholder="e.g curl -X GET http://http4k.org"></textarea>
@@ -63,13 +66,13 @@
                     border-blue-500
                     rounded resize-none p-1 h-64"
                 id="output"></textarea>
-        <button _="on click copyToClipboard(#output.value)
-        then put the 'Copied' into my.innerHTML
-        set x to my *background-color
-        log x
-        wait 0.5s then transition my *color to 'rgba(0,0,0,0)' over 0.5s
-        put 'Copy' into my.innerHTML
-        transition my *color to 'white' over 0.5s"
+        <button _="on click
+                        copyToClipboard(#output.value)
+                        then put 'Copied' into my.innerHTML
+                        set original to my *color
+                        wait 0.5s then transition my *color to 'rgba(0,0,0,0)' over 0.5s
+                        put 'Copy' into my.innerHTML
+                        transition my *color to original over 0.5s"
                 class="bg-blue-500
                    hover:bg-blue-700
                    text-white
