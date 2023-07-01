@@ -3,6 +3,8 @@ package curl
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.orThrow
 import io.github.gypsydave5.twofourkay.parse.curl.parseCurl
+import org.http4k.appendIfNotBlank
+import org.http4k.appendIfPresent
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Uri
@@ -143,7 +145,7 @@ class ParseCurlTest {
 
     @Test
     fun `a request, when converted toCurl and then parsed back from cURL, is the identical`() {
-        (0..20).forEach {
+        repeat(20) {
             val request: Request = Request.random()
             assertEquals(request, Request.parseCurl(request.toCurl()).orThrow())
         }
@@ -157,9 +159,56 @@ class ParseCurlTest {
     }
 }
 
-fun Request.Companion.random(): Request = Request(Method.random(), Uri.random())
+fun Request.Companion.random(): Request =
+    Request(Method.random(), Uri.random())
+        .body(String.random())
+        .headers(List(Int.random(0, 10)) { String.random() to String.random() })
 
-private fun Uri.Companion.random(): Uri = of("http://${String.random()}.com")
+private fun Uri.Companion.random(): Uri {
+    val scheme = randomScheme().orEmpty()
+    val authority = randomAuthority().orEmpty()
+    val path = String.random().orEmpty()
+    val query = String.random()
+    val fragment = String.random()
+
+    val s = StringBuilder()
+        .appendIfNotBlank(scheme, scheme, ":")
+        .appendIfNotBlank(authority, "//", authority)
+        .append(
+            when {
+                authority.isBlank() -> path
+                path.isBlank() || path.startsWith("/") -> path
+                else -> "/$path"
+            }
+        )
+        .appendIfNotBlank(query, "?", query)
+        .appendIfNotBlank(fragment, "#", fragment)
+        .toString()
+
+    return of(s)
+}
+
+private fun randomScheme(): String = String.random()
+
+private fun randomAuthority(): String {
+    val userInfo = String.random().orEmpty()
+    val host = String.random()
+    val port = randomPort().optional()
+
+    return StringBuilder()
+        .appendIfNotBlank(userInfo, userInfo, "@")
+        .appendIfNotBlank(host, host)
+        .appendIfPresent(port, ":", port.toString())
+        .toString()
+}
+
+private fun randomPort() = Int.random(1, 65535)
+
+private fun <T> T.optional(): T? = listOf(this, null).random()
+
+private fun Int.Companion.random(i: Int, i1: Int): Int = (i..i1).random()
+
+fun String.orEmpty(): String = listOf(this, "").random()
 
 private fun Method.Companion.random(): Method = Method.values().random()
 
