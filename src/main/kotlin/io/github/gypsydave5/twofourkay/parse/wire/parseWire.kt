@@ -3,6 +3,7 @@ package io.github.gypsydave5.twofourkay.parse.wire
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
+import dev.forkhandles.result4k.onFailure
 import org.http4k.core.HttpMessage
 import org.http4k.core.Method
 import org.http4k.core.Parameters
@@ -14,13 +15,17 @@ fun Request.Companion.parseWire(wire: String): Result<HttpMessage, Error> {
 
     val method = Method.valueOf(scanner.next())
     val path = scanner.next()
-    val version = scanner.next()
+    val version = scanner.nextLine().trim()
+    val headers = scanner.headers().onFailure { return it }
+    val body = scanner.allRemainingLines().trimStart()
 
-    scanner.nextLine()
+    return Success(Request(method, path, version).headers(headers).body(body))
+}
 
+private fun Scanner.headers(): Result<Parameters, Error> {
     var headers: Parameters = emptyList()
-    while (scanner.hasNextLine()) {
-        val line = scanner.nextLine().trim()
+    while (hasNextLine()) {
+        val line = nextLine().trim()
         if (line.isBlank()) {
             break // End of headers
         }
@@ -32,9 +37,7 @@ fun Request.Companion.parseWire(wire: String): Result<HttpMessage, Error> {
         headers = headers + (key to value)
     }
 
-    val body = scanner.allRemainingLines().trimStart()
-
-    return Success(Request(method, path, version).headers(headers).body(body))
+    return Success(headers)
 }
 
 private fun Scanner.allRemainingLines(): String {
