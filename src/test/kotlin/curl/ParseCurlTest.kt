@@ -161,7 +161,7 @@ class ParseCurlTest {
 
 fun Request.Companion.random(): Request =
     Request(Method.random(), Uri.random())
-        .body(String.random())
+        .body(String.random().orEmpty())
         .headers(List(Int.random(0, 10)) { String.random() to String.random() })
 
 private fun Uri.Companion.random(): Uri {
@@ -264,5 +264,5 @@ private val exampleCurlPostFromChrome = """curl 'http://google.com/' \
                     |--compressed""".trimMargin()
 
 
-private fun <S, T> Iterable<S>.cartesianProduct(other: Iterable<T>) =
+private fun <S, T> Iterable<S>.cartesianProduct(other: Iterable<T>): List<Pair<S, T>> =
     this.flatMap { thisIt -> other.map { otherIt -> thisIt to otherIt } }
