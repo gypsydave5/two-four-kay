@@ -5,6 +5,8 @@ import dev.forkhandles.result4k.orThrow
 import io.github.gypsydave5.twofourkay.parse.curl.parseCurl
 import org.http4k.appendIfNotBlank
 import org.http4k.appendIfPresent
+import org.http4k.core.HttpMessage.Companion.HTTP_1_1
+import org.http4k.core.HttpMessage.Companion.HTTP_2
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Uri
@@ -160,9 +162,11 @@ class ParseCurlTest {
 }
 
 fun Request.Companion.random(): Request =
-    Request(Method.random(), Uri.random())
+    Request(Method.random(), Uri.random(), randomHttpVersion())
         .body(String.random().orEmpty())
         .headers(List(Int.random(0, 10)) { String.random() to String.random() })
+
+private fun randomHttpVersion() = listOf(HTTP_1_1, HTTP_2).random()
 
 private fun Uri.Companion.random(): Uri {
     val scheme = randomScheme().orEmpty()
@@ -218,23 +222,6 @@ private fun String.Companion.random(
 ): String =
     CharArray(size) { chars.toList().random() }.concatToString()
 
-
-private val exampleCurlFromFirefox = """curl 'https://blog.gypsydave5.com/' 
-    |-H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0' 
-    |-H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' 
-    |-H 'Accept-Language: en-GB,en;q=0.7,en-US;q=0.3' 
-    |-H 'Accept-Encoding: gzip, deflate, br' 
-    |-H 'DNT: 1' 
-    |-H 'Connection: keep-alive' 
-    |-H 'Upgrade-Insecure-Requests: 1' 
-    |-H 'Sec-Fetch-Dest: document' 
-    |-H 'Sec-Fetch-Mode: navigate' 
-    |-H 'Sec-Fetch-Site: none' 
-    |-H 'Sec-Fetch-User: ?1' 
-    |-H 'If-Modified-Since: Wed, 10 Aug 2022 09:16:26 GMT'
-    |-H 'If-None-Match: "7d51b9981a61c7f2fe01949a0dd5c20b"'"""
-    .trimMargin()
-
 private val exampleCurlFromChrome = """curl 'https://html.duckduckgo.com/html/' \
         |-H 'authority: html.duckduckgo.com' \
         |-H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' \
@@ -254,15 +241,6 @@ private val exampleCurlFromChrome = """curl 'https://html.duckduckgo.com/html/' 
         |-H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36' \
         |--data-raw 'q=http4k&b=' \
         |--compressed""".trimMargin()
-
-private val exampleCurlPostFromChrome = """curl 'http://google.com/' \
-                    |-X 'POST' \
-                    |-H 'Content-Type: application/x-www-form-urlencoded' \
-                    |-H 'Origin: null' \
-                    |-H 'Upgrade-Insecure-Requests: 1' \
-                    |-H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36' \
-                    |--compressed""".trimMargin()
-
 
 private fun <S, T> Iterable<S>.cartesianProduct(other: Iterable<T>): List<Pair<S, T>> =
     this.flatMap { thisIt -> other.map { otherIt -> thisIt to otherIt } }
