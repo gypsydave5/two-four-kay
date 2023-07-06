@@ -11,12 +11,12 @@ import org.http4k.core.Status
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 
-class CurlHandler() : HttpHandler by routes(
+class CurlHandler : HttpHandler by routes(
     Method.POST bind { request ->
         request.bodyString()
             .parseCurl()
             .map { it.generateKotlin() }
             .map { Response(Status.OK).body(it) }
             .recover { Response(Status.BAD_REQUEST).body(it.message ?: "unknown error") }
-    },
+    }
 )

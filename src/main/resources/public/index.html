@@ -29,7 +29,7 @@
               hx-target-4*="#errors"
               hx-target-5*="#errors"
               method="post">
-            <label for="content"><span>HAR or cURL to convert</span></label>
+            <label for="content"><span>HAR, cURL, or wire format HTTP message to convert</span></label>
             <textarea class="my-5
                             font-mono
                             border
@@ -67,12 +67,13 @@
                     rounded resize-none p-1 h-64"
                 id="output"></textarea>
         <button _="on click
-                        copyToClipboard(#output.value)
-                        then put 'Copied' into my.innerHTML
-                        set original to my *color
-                        wait 0.5s then transition my *color to 'rgba(0,0,0,0)' over 0.5s
-                        put 'Copy' into my.innerHTML
-                        transition my *color to original over 0.5s"
+                    get the innerText of #output.value
+                    then writeText(the result) with the navigator's clipboard
+                    then put 'Copied!' into my.innerHTML
+                    set original to my *color
+                    wait 0.5s then transition my *color to 'rgba(0,0,0,0)' over 0.5s
+                    put 'Copy' into my.innerHTML
+                    transition my *color to original over 0.5s"
                 class="bg-blue-500
                    hover:bg-blue-700
                    text-white

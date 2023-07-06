@@ -4,13 +4,12 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import dev.forkhandles.result4k.onFailure
-import org.http4k.core.HttpMessage
 import org.http4k.core.Method
 import org.http4k.core.Parameters
 import org.http4k.core.Request
 import java.util.*
 
-fun Request.Companion.parseWire(wire: String): Result<HttpMessage, Error> {
+fun Request.Companion.parseWire(wire: String): Result<Request, Error> {
     val scanner = Scanner(wire)
 
     val method = Method.valueOf(scanner.next())
@@ -21,6 +20,8 @@ fun Request.Companion.parseWire(wire: String): Result<HttpMessage, Error> {
 
     return Success(Request(method, path, version).headers(headers).body(body))
 }
+
+fun String.parseWire(): Result<Request, Error> = Request.parseWire(this)
 
 private fun Scanner.headers(): Result<Parameters, Error> {
     var headers: Parameters = emptyList()
