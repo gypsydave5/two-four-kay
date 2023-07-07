@@ -58,7 +58,7 @@ class AppTest {
     }
 
     @Test
-    fun `you can use the index page to submit a form with a wire format HTTP message in it`() {
+    fun `you can use the index page to submit a form with a wire format HTTP request in it`() {
         val app = App(TestConfig)
 
         val driver = Http4kWebDriver(app)
@@ -73,6 +73,27 @@ class AppTest {
               |import org.http4k.core.Request
 
               |public val request: Request = Request(Method.TRACE, "https://http4k.org")""".trimMargin(),
+            driver.findElement(By.cssSelector("#output"))!!.text
+        )
+    }
+
+    @Test
+    fun `you can use the index page to submit a form with a wire format HTTP response in it`() {
+        val app = App(TestConfig)
+
+        val driver = Http4kWebDriver(app)
+
+        driver.navigate().to("/")
+        driver.findElement(By.cssSelector("textarea"))!!.sendKeys("HTTP/2 9 WHATEVS")
+        driver.findElement(By.cssSelector("form"))!!.submit()
+
+        assertEquals(Status.OK, driver.status)
+        assertEquals(
+            """import org.http4k.core.HttpMessage
+              |import org.http4k.core.Response
+              |import org.http4k.core.Status
+
+              |public val response: Response = Response(Status(9, "WHATEVS"), HttpMessage.HTTP_2)""".trimMargin(),
             driver.findElement(By.cssSelector("#output"))!!.text
         )
     }

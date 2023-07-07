@@ -1,12 +1,7 @@
 package io.github.gypsydave5.twofourkay.parse.wire
 
-import dev.forkhandles.result4k.Failure
-import dev.forkhandles.result4k.Result
-import dev.forkhandles.result4k.Success
-import dev.forkhandles.result4k.onFailure
-import org.http4k.core.Method
-import org.http4k.core.Parameters
-import org.http4k.core.Request
+import dev.forkhandles.result4k.*
+import org.http4k.core.*
 import java.util.*
 
 fun Request.Companion.parseWire(wire: String): Result<Request, Error> {
@@ -21,7 +16,30 @@ fun Request.Companion.parseWire(wire: String): Result<Request, Error> {
     return Success(Request(method, path, version).headers(headers).body(body))
 }
 
-fun String.parseWire(): Result<Request, Error> = Request.parseWire(this)
+fun Response.Companion.parseWire(wire: String): Result<Response, Error> {
+    val scanner = Scanner(wire)
+
+    val statusLine = scanner.nextLine().trim()
+    val (httpVersion, statusCodeString, statusMessage) = statusLine.split(" ", limit = 3)
+    val statusCode = statusCodeString.asStatusCode().onFailure { return it }
+
+    val status = Status(statusCode, statusMessage)
+    val headers = scanner.headers().onFailure { return it }
+    val body = scanner.allRemainingLines().trimStart()
+
+    return Success(Response(status, httpVersion).headers(headers).body(body))
+}
+
+data class InvalidResponse(override val message: String? = null) : Error(message)
+data class InvalidStatusCode(override val message: String? = null) : Error(message)
+
+fun String.parseWireRequest(): Result<Request, Error> = Request.parseWire(this)
+fun String.parseWireResponse(): Result<Response, Error> = Response.parseWire(this)
+
+private fun String.asStatusCode(): Result<Int, Error> {
+    return resultFrom { toInt() }
+        .mapFailure { InvalidStatusCode(this) }
+}
 
 private fun Scanner.headers(): Result<Parameters, Error> {
     var headers: Parameters = emptyList()

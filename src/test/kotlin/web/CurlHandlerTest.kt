@@ -1,11 +1,11 @@
 package web
 
-import curl.random
 import io.github.gypsydave5.twofourkay.generateKotlin.generateKotlin
 import io.github.gypsydave5.twofourkay.web.CurlHandler
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.toCurl
+import random.random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

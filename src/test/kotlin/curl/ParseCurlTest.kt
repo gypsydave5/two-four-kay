@@ -3,14 +3,10 @@ package curl
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.orThrow
 import io.github.gypsydave5.twofourkay.parse.curl.parseCurl
-import org.http4k.appendIfNotBlank
-import org.http4k.appendIfPresent
-import org.http4k.core.HttpMessage.Companion.HTTP_1_1
-import org.http4k.core.HttpMessage.Companion.HTTP_2
 import org.http4k.core.Method
 import org.http4k.core.Request
-import org.http4k.core.Uri
 import org.http4k.core.toCurl
+import random.random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -160,67 +156,6 @@ class ParseCurlTest {
         assertTrue(result is Failure)
     }
 }
-
-fun Request.Companion.random(): Request =
-    Request(Method.random(), Uri.random(), randomHttpVersion())
-        .body(String.random().orEmpty())
-        .headers(List(Int.random(0, 10)) { String.random() to String.random() })
-
-private fun randomHttpVersion() = listOf(HTTP_1_1, HTTP_2).random()
-
-private fun Uri.Companion.random(): Uri {
-    val scheme = randomScheme().orEmpty()
-    val authority = randomAuthority().orEmpty()
-    val path = String.random().orEmpty()
-    val query = String.random()
-    val fragment = String.random()
-
-    val s = StringBuilder()
-        .appendIfNotBlank(scheme, scheme, ":")
-        .appendIfNotBlank(authority, "//", authority)
-        .append(
-            when {
-                authority.isBlank() -> path
-                path.isBlank() || path.startsWith("/") -> path
-                else -> "/$path"
-            }
-        )
-        .appendIfNotBlank(query, "?", query)
-        .appendIfNotBlank(fragment, "#", fragment)
-        .toString()
-
-    return of(s)
-}
-
-private fun randomScheme(): String = String.random()
-
-private fun randomAuthority(): String {
-    val userInfo = String.random().orEmpty()
-    val host = String.random()
-    val port = randomPort().optional()
-
-    return StringBuilder()
-        .appendIfNotBlank(userInfo, userInfo, "@")
-        .appendIfNotBlank(host, host)
-        .appendIfPresent(port, ":", port.toString())
-        .toString()
-}
-
-private fun randomPort() = Int.random(1, 65535)
-
-private fun <T> T.optional(): T? = listOf(this, null).random()
-
-private fun Int.Companion.random(i: Int, i1: Int): Int = (i..i1).random()
-
-fun String.orEmpty(): String = listOf(this, "").random()
-
-private fun Method.Companion.random(): Method = Method.values().random()
-
-private fun String.Companion.random(
-    size: Int = 20,
-    chars: Iterable<Char> = ('A'..'Z') + ('a'..'z') + ('0'..'9')
-): String =
-    CharArray(size) { chars.toList().random() }.concatToString()
 
 private val exampleCurlFromChrome = """curl 'https://html.duckduckgo.com/html/' \
         |-H 'authority: html.duckduckgo.com' \
