@@ -3,10 +3,12 @@ package curl
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.orThrow
 import io.github.gypsydave5.twofourkay.parse.curl.parseCurl
+import org.http4k.core.HttpMessage.Companion.HTTP_2
 import org.http4k.core.Method
 import org.http4k.core.Request
-import org.http4k.core.toCurl
+import org.http4k.core.Uri
 import random.random
+import web.toCurl
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -139,6 +141,13 @@ class ParseCurlTest {
             .body("q=http4k&b=")
 
         assertEquals(expected, request)
+    }
+
+    @Test
+    fun `can do HTTP version 2`() {
+        val request = Request(method = Method.random(), Uri.random(), HTTP_2)
+        val actual = Request.parseCurl(request.toCurl()).orThrow()
+        assertEquals(request.version, actual.version)
     }
 
     @Test

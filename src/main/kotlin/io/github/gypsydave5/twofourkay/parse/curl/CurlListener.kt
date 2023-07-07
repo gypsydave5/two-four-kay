@@ -2,33 +2,37 @@ package io.github.gypsydave5.twofourkay.parse.curl
 
 import CurlBaseListener
 import CurlParser
-import org.http4k.core.Method
-import org.http4k.core.Request
-import org.http4k.core.Uri
+import org.http4k.core.*
+import org.http4k.core.HttpMessage.Companion.HTTP_1_1
+import org.http4k.core.HttpMessage.Companion.HTTP_2
 
 internal class CurlListener : CurlBaseListener() {
-    private var request: Request = Request(Method.GET, "")
+    var version: String? = null
+    var method: Method = Method.GET
+    var headers: Headers = listOf()
+    var body: Body = Body("")
+    var uri = Uri.of("")
 
     override fun enterUrl(ctx: CurlParser.UrlContext) {
-        request = request.uri(Uri.of(ctx.text.stripQuotes()))
+        uri = (Uri.of(ctx.text.stripQuotes()))
     }
 
     override fun enterOption(ctx: CurlParser.OptionContext) {
         val optionName = ctx.optionName().text
         val optionValue = ctx.optionValue()?.text?.stripQuotes()
 
-        request = when (optionName) {
-            "-X", "--request" -> optionValue?.let { request.method(Method.valueOf(it)) }
+        when (optionName) {
+            "-X", "--request" -> optionValue?.let { method = Method.valueOf(it) }
             "-H", "--header" -> optionValue
                 ?.split(':', ignoreCase = false, limit = 2)
-                ?.let { request.header(it.first().trim(), it[1].trim()) }
+                ?.let { headers += (it.first().trim() to it[1].trim()) }
 
-            "-d", "--data", "--data-raw" -> optionValue?.let { request.body(it) }
-            else -> null
-        } ?: request
+            "-d", "--data", "--data-raw" -> optionValue?.let { body = Body(it) }
+            "--http2" -> version = HTTP_2
+        }
     }
 
-    fun buildRequest(): Request = request
+    fun buildRequest(): Request = Request(method, uri, version ?: HTTP_1_1).headers(headers).body(body)
 }
 
 private fun String.stripQuotes(): String = when (first()) {

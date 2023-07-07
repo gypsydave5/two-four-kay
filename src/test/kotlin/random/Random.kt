@@ -18,8 +18,8 @@ private fun Status.Companion.random(): Status {
     return Status(Int.random(100, 599), String.random(20))
 }
 
-private fun randomHttpVersion() = listOf(HttpMessage.HTTP_1_1, HttpMessage.HTTP_2).random()
-private fun Uri.Companion.random(): Uri {
+fun randomHttpVersion() = listOf(HttpMessage.HTTP_1_1, HttpMessage.HTTP_2).random()
+fun Uri.Companion.random(): Uri {
     val scheme = randomScheme().orEmpty()
     val authority = randomAuthority().orEmpty()
     val path = String.random().orEmpty()
@@ -56,11 +56,11 @@ private fun randomAuthority(): String {
         .toString()
 }
 
-private fun randomPort() = Int.random(1, 65535)
-private fun <T> T.optional(): T? = listOf(this, null).random()
+fun randomPort() = Int.random(1, 65535)
+fun <T> T.optional(): T? = listOf(this, null).random()
 fun Int.Companion.random(i: Int, i1: Int): Int = (i..i1).random()
 fun String.orEmpty(): String = listOf(this, "").random()
-private fun Method.Companion.random(): Method = Method.values().random()
+fun Method.Companion.random(): Method = Method.values().random()
 fun String.Companion.random(
     size: Int = 20,
     chars: Iterable<Char> = ('A'..'Z') + ('a'..'z') + ('0'..'9')

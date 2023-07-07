@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     kotlin("jvm") version "1.8.0"
     kotlin("plugin.serialization") version "1.8.21"
@@ -47,6 +50,12 @@ tasks.named("compileTestKotlin")
 
 tasks.test {
     useJUnitPlatform()
+    testLogging {
+        events(TestLogEvent.FAILED, TestLogEvent.STANDARD_ERROR, TestLogEvent.STANDARD_OUT)
+        exceptionFormat = TestExceptionFormat.FULL
+        showCauses = true
+        showExceptions = true
+    }
 }
 
 kotlin {
@@ -78,3 +87,4 @@ task<Exec>("tailwindBuild") {
 application {
     mainClass.set("MainKt")
 }
+
