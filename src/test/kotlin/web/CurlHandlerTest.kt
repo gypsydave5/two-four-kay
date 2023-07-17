@@ -10,13 +10,14 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.quoted
 import random.random
+import random.randomly
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CurlHandlerTest {
     @Test
     fun `can turn a curl into Kotlin`() {
-        val expected = Request.random()
+        val expected = randomly { Request.random() }
         val curl = expected.toCurl()
         val handler = CurlHandler()
 

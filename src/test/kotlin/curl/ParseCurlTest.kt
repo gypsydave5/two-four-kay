@@ -8,6 +8,7 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Uri
 import random.random
+import random.randomly
 import web.toCurl
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -145,16 +146,21 @@ class ParseCurlTest {
 
     @Test
     fun `can do HTTP version 2`() {
-        val request = Request(method = Method.random(), Uri.random(), HTTP_2)
-        val actual = Request.parseCurl(request.toCurl()).orThrow()
-        assertEquals(request.version, actual.version)
+        randomly {
+            val request = Request(method = Method.random(), Uri.random(), HTTP_2)
+            val actual = Request.parseCurl(request.toCurl()).orThrow()
+            assertEquals(request.version, actual.version)
+        }
     }
 
     @Test
     fun `a request, when converted toCurl and then parsed back from cURL, is the identical`() {
-        repeat(20) {
-            val request: Request = Request.random()
-            assertEquals(request, Request.parseCurl(request.toCurl()).orThrow())
+        randomly {
+            repeat(20) {
+                println(Int.random(1, 100))
+                val request: Request = Request.random()
+                assertEquals(request, Request.parseCurl(request.toCurl()).orThrow())
+            }
         }
     }
 

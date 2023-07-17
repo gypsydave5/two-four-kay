@@ -16,14 +16,16 @@
 <div class="relative flex min-h-screen flex-col sm:flex-row
             overflow-hidden bg-gray-50 py-4 sm:py-8">
 
-    <div class="bg-red-300 transition-all h-32 content"
+    <div class="bg-red-300 transition-all h-32 p-4 content"
          _="init wait 4s
                 then add .h-0
                 then remove .h-32
+                then remove .p-4
 
             on click
                 add .h-0
-                remove .h-32"
+                remove .h-32
+                remove .p-4"
          id="errors">
         <h2 class="text-xl">Error</h2>{{message}}</div>
 </div>
