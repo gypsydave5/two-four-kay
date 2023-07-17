@@ -157,7 +157,6 @@ class ParseCurlTest {
     fun `a request, when converted toCurl and then parsed back from cURL, is the identical`() {
         randomly {
             repeat(20) {
-                println(Int.random(1, 100))
                 val request: Request = Request.random()
                 assertEquals(request, Request.parseCurl(request.toCurl()).orThrow())
             }
